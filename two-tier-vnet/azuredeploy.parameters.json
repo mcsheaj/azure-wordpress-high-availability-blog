@@ -1,0 +1,24 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "virtualNetworkName": {
+        "value": "Two_Tier_VNet"
+      },
+      "addressPrefix": {
+        "value": "172.28.0.0/16"
+      },
+      "publicSecurityGroupName": {
+        "value": "Public_Security_Group"
+      },
+      "publicSubnetPrefix": {
+        "value": "172.28.42.0/24"
+      },
+      "privateSecurityGroupName": {
+        "value": "Private_Security_Group"
+      },
+      "privateSubnetPrefix": {
+        "value": "172.28.43.0/24"
+      }
+    }
+  }
