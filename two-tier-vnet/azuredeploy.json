@@ -67,6 +67,20 @@
                             "priority": 100,
                             "direction": "Inbound"
                         }
+                    },
+                    {
+                        "name": "all_allow_outbound_rule",
+                        "properties": {
+                            "description": "Allow Outbound",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 200,
+                            "direction": "Outbound"
+                        }
                     }
                 ]
             }
