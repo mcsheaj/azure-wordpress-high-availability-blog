@@ -1,0 +1,30 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "setName": {
+            "value": "JumpBoxProd"
+        },
+        "availabilityZones": {
+            "value": [
+                "1",
+                "2"
+            ]
+        },
+        "vnetName": {
+            "value": "Two_Tier_VNet"
+        },
+        "subnetName": {
+            "value": "publicSubnet"
+        },
+        "machineSku": {
+            "value": "Standard_B1ls"
+        },
+        "adminUsername": {
+            "value": "mcsheaj"
+        },
+        "sshPublicKey": {
+            "value": ""
+        }
+    }
+}
