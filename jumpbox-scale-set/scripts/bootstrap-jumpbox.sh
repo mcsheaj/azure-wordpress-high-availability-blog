@@ -1,7 +1,7 @@
 #!/bin/bash -xe
 
 # Resync the package index files and upgrade all installed packages
-apt clean
+apt clean & apt-get -y update
 apt-get -y upgrade
 
 # Flush IP tables
@@ -17,7 +17,7 @@ iptables -A INPUT -j DROP
 # Persist IP tables configuration
 echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
 echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
-apt-get install iptables-persistent
+apt-get -y install iptables-persistent
 
 # Install fail2ban
 apt-get -y install fail2ban
