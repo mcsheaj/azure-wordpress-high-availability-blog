@@ -102,7 +102,12 @@
                                     }
                                 ]
                             }
-                        }
+                        },
+                        "customData": "[base64('#!/bin/bash -xe 
+                            wget --no-cache -O https://raw.githubusercontent.com/mcsheaj/azure-wordpress-high-availability-blog/master/jumpbox-scale-set/scripts/bootstrap-jumpbox.sh
+                            chmod 700 /tmp/bootstrap-jumpbox.sh
+                            /tmp/bootstrap-jumpbox.sh
+                            ')]"
                     },
                     "networkProfile": {
                         "networkInterfaceConfigurations": [
@@ -130,26 +135,6 @@
                             }
                         ]
                     },
-                    "extensionProfile": {
-                        "extensions": [
-                            {
-                                "name": "bootstrapextension",
-                                "properties": {
-                                    "publisher": "Microsoft.Azure.Extensions",
-                                    "type": "CustomScript",
-                                    "typeHandlerVersion": "2.0",
-                                    "autoUpgradeMinorVersion": true,
-                                    "settings": {
-                                        "fileUris": [
-                                            "https://raw.githubusercontent.com/mcsheaj/azure-wordpress-high-availability-blog/master/jumpbox-scale-set/scripts/bootstrap-jumpbox.sh"
-                                        ],
-                                        "commandToExecute": "bash bootstrap-jumpbox.sh"
-                                    }
-                                }
-                            }
-                        ]
-                    }
-                },
                 "zoneBalance": false
             },
             "zones": "[parameters('availabilityZones')]"
