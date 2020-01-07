@@ -15,7 +15,7 @@
             "value": "vnet-wp-prod-westus2"
         },
         "subnetName": {
-            "value": "nsg-wp-public-prod-westus2"
+            "value": "publicSubnet"
         },
         "machineSku": {
             "value": "Standard_B1ls"
