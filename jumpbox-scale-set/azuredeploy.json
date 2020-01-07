@@ -55,7 +55,8 @@
     "variables": {
         "namingInfix": "[toLower(substring(concat(parameters('setName'), uniqueString(resourceGroup().id)), 0, 9))]",
         "instanceCount": "1",
-        "subnetPath": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/', parameters('subnetName'))]"
+        "subnetPath": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/', parameters('subnetName'))]",
+        "customData": "[concat('#!/bin/bash -xe\n', 'wget --no-cache -O https://raw.githubusercontent.com/mcsheaj/azure-wordpress-high-availability-blog/master/jumpbox-scale-set/scripts/bootstrap-jumpbox.sh\n', 'bash /tmp/bootstrap-jumpbox.sh\n\n')]"
     },
     "resources": [
         {
@@ -103,7 +104,7 @@
                                 ]
                             }
                         },
-                        "customData": "[base64('#!/bin/bash -xe\nwget --no-cache -O https://raw.githubusercontent.com/mcsheaj/azure-wordpress-high-availability-blog/master/jumpbox-scale-set/scripts/bootstrap-jumpbox.sh\nbash /tmp/bootstrap-jumpbox.sh\n\n')]"
+                        "customData": "[base64(variables('customData'))]"
                      },
                     "networkProfile": {
                         "networkInterfaceConfigurations": [
