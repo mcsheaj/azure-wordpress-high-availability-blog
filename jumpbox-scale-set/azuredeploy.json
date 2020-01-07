@@ -53,7 +53,7 @@
         }
     },
     "variables": {
-        "namingInfix": "[toLower(substring(concat(parameters('setName'), uniqueString(resourceGroup().id)), 0, 9))]",
+        "namingInfix": "[toLower(concat(parameters('setName'), '-', uniqueString(resourceGroup().id), 0, 4))]",
         "instanceCount": "1",
         "subnetPath": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/', parameters('subnetName'))]",
         "customData": "[concat('#!/bin/bash -xe', '
