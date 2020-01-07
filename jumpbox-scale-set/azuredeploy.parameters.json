@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "setName": {
-            "value": "vm-jumpbox-wp-prod"
+            "value": "vm_jumpbox_wp_prod"
         },
         "availabilityZones": {
             "value": [
