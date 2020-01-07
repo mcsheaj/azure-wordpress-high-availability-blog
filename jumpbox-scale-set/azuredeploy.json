@@ -61,8 +61,8 @@
     "variables": {
         "computerNamePrefix": "[toLower(concat(parameters('setName'), '-', substring(uniqueString(resourceGroup().id), 0, 8)))]",
         "capacity": "1",
-        "subnetId": "[resourceID('Microsoft.Network/virtualNetworks/', parameters('vnetName'), 'subnets', parameters('subnetName'))]",
-        "userAssignedIdentityId": "[resourceID('Microsoft.ManagedIdentity/userAssignedIdentities/', parameters('userAssignedIdentityName'))]",
+        "subnetId": "[resourceId('Microsoft.Network/virtualNetworks/', parameters('vnetName'), 'subnets', parameters('subnetName'))]",
+        "userAssignedIdentityId": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities/', parameters('userAssignedIdentityName'))]",
         "customData": "[concat('#!/bin/bash -xe', '
             wget --no-cache -O /tmp/bootstrap-jumpbox.sh https://raw.githubusercontent.com/mcsheaj/azure-wordpress-high-availability-blog/master/jumpbox-scale-set/scripts/bootstrap-jumpbox.sh
             bash /tmp/bootstrap-jumpbox.sh
