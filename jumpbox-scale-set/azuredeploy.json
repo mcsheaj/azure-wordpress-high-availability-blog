@@ -88,8 +88,7 @@
                         "osDisk": {
                             "createOption": "FromImage",
                             "caching": "ReadWrite"
-                        },
-                        "customData": "[base64(variables('customData'))]"
+                        }
                     },
                     "priority": "Regular",
                     "osProfile": {
@@ -105,7 +104,8 @@
                                     }
                                 ]
                             }
-                        }
+                        },
+                        "customData": "[base64(variables('customData'))]"
                     },
                     "networkProfile": {
                         "networkInterfaceConfigurations": [
