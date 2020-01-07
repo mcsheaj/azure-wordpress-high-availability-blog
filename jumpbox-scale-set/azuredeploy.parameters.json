@@ -18,7 +18,7 @@
             "value": "publicSubnet"
         },
         "machineSku": {
-            "value": "Standard_B1ls"
+            "value": "Standard_B1s"
         },
         "adminUsername": {
             "value": "mcsheaj"
