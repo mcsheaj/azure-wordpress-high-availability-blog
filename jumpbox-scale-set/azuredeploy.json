@@ -53,9 +53,9 @@
         }
     },
     "variables": {
-        "namingInfix": "[toLower(concat(parameters('setName'), '-', substring(uniqueString(resourceGroup().id), 0, 8)))]",
-        "instanceCount": "1",
-        "subnetPath": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/', parameters('subnetName'))]",
+        "capacity": "1",
+        "computerNamePrefix": "[toLower(concat(parameters('setName'), '-', substring(uniqueString(resourceGroup().id), 0, 8)))]",
+        "subnetId": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/', parameters('subnetName'))]",
         "customData": "[concat('#!/bin/bash -xe', '
             wget --no-cache -O /tmp/bootstrap-jumpbox.sh https://raw.githubusercontent.com/mcsheaj/azure-wordpress-high-availability-blog/master/jumpbox-scale-set/scripts/bootstrap-jumpbox.sh
             bash /tmp/bootstrap-jumpbox.sh
@@ -73,7 +73,7 @@
             "sku": {
                 "name": "[parameters('machineSku')]",
                 "tier": "Standard",
-                "capacity": "[int(variables('instanceCount'))]"
+                "capacity": "[int(variables('capacity'))]"
             },
             "properties": {
                 "overprovision": true,
@@ -95,7 +95,7 @@
                     },
                     "priority": "Regular",
                     "osProfile": {
-                        "computerNamePrefix": "[variables('namingInfix')]",
+                        "computerNamePrefix": "[variables('computerNamePrefix')]",
                         "adminUsername": "[parameters('adminUsername')]",
                         "linuxConfiguration": {
                             "disablePasswordAuthentication": true,
@@ -121,7 +121,7 @@
                                             "name": "[concat(parameters('setName'), 'IpConfig')]",
                                             "properties": {
                                                 "subnet": {
-                                                    "id": "[variables('subnetPath')]"
+                                                    "id": "[variables('subnetId')]"
                                                 },
                                                 "publicIpAddressConfiguration": {
                                                     "name": "pub1",
