@@ -30,7 +30,8 @@
             "type": "string",
             "metadata": {
                 "description": "The sku for the virtual machine size you want to allocate."
-            }        },
+            }
+        },
         "adminUsername": {
             "type": "string",
             "metadata": {
@@ -62,7 +63,8 @@
             "type": "Microsoft.Compute/virtualMachineScaleSets",
             "apiVersion": "2019-03-01",
             "location": "[parameters('location')]",
-            "dependsOn": [],
+            "dependsOn": [
+            ],
             "sku": {
                 "name": "[parameters('machineSku')]",
                 "tier": "Standard",
