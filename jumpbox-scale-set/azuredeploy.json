@@ -103,11 +103,7 @@
                                 ]
                             }
                         },
-                        "customData": "[base64('#!/bin/bash -xe 
-                            wget --no-cache -O https://raw.githubusercontent.com/mcsheaj/azure-wordpress-high-availability-blog/master/jumpbox-scale-set/scripts/bootstrap-jumpbox.sh
-                            chmod 700 /tmp/bootstrap-jumpbox.sh
-                            /tmp/bootstrap-jumpbox.sh
-                            ')]"
+                        "customData": "[base64('#!/bin/bash -xe\nwget --no-cache -O https://raw.githubusercontent.com/mcsheaj/azure-wordpress-high-availability-blog/master/jumpbox-scale-set/scripts/bootstrap-jumpbox.sh\nbash /tmp/bootstrap-jumpbox.sh\n\n')]"
                     },
                     "networkProfile": {
                         "networkInterfaceConfigurations": [
