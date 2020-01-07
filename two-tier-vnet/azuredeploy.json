@@ -55,12 +55,12 @@
             "properties": {
                 "securityRules": [
                     {
-                        "name": "ssh_443_rule",
+                        "name": "ssh_allow_internet_inbound_rule",
                         "properties": {
-                            "description": "Allow SSH on port 443 from anywhere",
+                            "description": "Allow SSH on port 22 from anywhere",
                             "protocol": "Tcp",
                             "sourcePortRange": "*",
-                            "destinationPortRange": "443",
+                            "destinationPortRange": "22",
                             "sourceAddressPrefix": "Internet",
                             "destinationAddressPrefix": "*",
                             "access": "Allow",
@@ -93,7 +93,7 @@
             "properties": {
                 "securityRules": [
                     {
-                        "name": "ssh_443_allow_public_inbound_rule",
+                        "name": "ssh_allow_public_inbound_rule",
                         "properties": {
                             "description": "Allow SSH on port 22 from the Public Subnet",
                             "protocol": "Tcp",
@@ -107,9 +107,9 @@
                         }
                     },
                     {
-                        "name": "ssh_443_block_internet_inbound_rule",
+                        "name": "ssh_block_internet_inbound_rule",
                         "properties": {
-                            "description": "Block SSH on port 443 from the anywhere else",
+                            "description": "Block SSH on port 22 from the anywhere else",
                             "protocol": "Tcp",
                             "sourcePortRange": "*",
                             "destinationPortRange": "22",
@@ -121,15 +121,15 @@
                         }
                     },
                     {
-                        "name": "all_block_outbound_rule",
+                        "name": "all_allow_outbound_rule",
                         "properties": {
-                            "description": "Block Internet",
+                            "description": "Allow Outbound",
                             "protocol": "*",
                             "sourcePortRange": "*",
                             "destinationPortRange": "*",
                             "sourceAddressPrefix": "*",
-                            "destinationAddressPrefix": "Internet",
-                            "access": "Deny",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
                             "priority": 200,
                             "direction": "Outbound"
                         }
