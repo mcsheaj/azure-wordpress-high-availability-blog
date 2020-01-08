@@ -20,12 +20,6 @@
                 "description": "The name of the existing virtual network."
             }
         },
-        "subnetName": {
-            "type": "string",
-            "metadata": {
-                "description": "The name of an existing subnet in the virtual network."
-            }
-        },
         "machineSku": {
             "type": "string",
             "metadata": {
@@ -50,6 +44,18 @@
                 "description": "The account name of the user assigned managed to assign as a service principal."
             }
         },
+        "applicationName": {
+            "type": "string",
+            "metadata": {
+                "description": "The value for the application name tag (e.g. WordPress)."
+            }
+        },
+        "environment": {
+            "type": "string",
+            "metadata": {
+                "description": "The value for the environment tag (e.g. Production, Test, Development, Demo, ...)."
+            }
+        },
         "location": {
             "type": "string",
             "defaultValue": "[resourceGroup().location]",
@@ -59,10 +65,11 @@
         }
     },
     "variables": {
-        "computerNamePrefix": "[toLower(concat(parameters('setName'), '-', substring(uniqueString(resourceGroup().id), 0, 8)))]",
+        "computerNamePrefix": "[toLower(substring(concat(parameters('setName'), uniqueString(resourceGroup().id)), 0, 9))]",
         "capacity": "1",
-        "subnetId": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/', parameters('subnetName'))]",
+        "subnetId": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/subnet-public-', parameters('vnetName'))]",
         "userAssignedIdentityId": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities/', parameters('userAssignedIdentityName'))]",
+        "userAssignedIdentityDependency": "[concat('Microsoft.ManagedIdentity/userAssignedIdentities/', parameters('userAssignedIdentityName'))]",
         "customData": "[concat('#!/bin/bash -xe', '
             wget --no-cache -O /tmp/bootstrap-jumpbox.sh https://raw.githubusercontent.com/mcsheaj/azure-wordpress-high-availability-blog/master/jumpbox-scale-set/scripts/bootstrap-jumpbox.sh
             bash /tmp/bootstrap-jumpbox.sh
@@ -70,11 +77,25 @@
     },
     "resources": [
         {
+            "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+            "apiVersion": "2018-11-30",
+            "name": "[parameters('userAssignedIdentityName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+            },
+            "tags": {
+                "ApplicationName": "[parameters('applicationName')]",
+                "Network": "Public",
+                "Environment": "[parameters('environment')]"
+            }
+        },
+        {
             "name": "[parameters('setName')]",
             "type": "Microsoft.Compute/virtualMachineScaleSets",
             "apiVersion": "2019-03-01",
             "location": "[parameters('location')]",
             "dependsOn": [
+                "[variables('userAssignedIdentityDependency')]"
             ],
             "sku": {
                 "name": "[parameters('machineSku')]",
@@ -126,18 +147,18 @@
                     "networkProfile": {
                         "networkInterfaceConfigurations": [
                             {
-                                "name": "[concat(parameters('setName'), 'Nic')]",
+                                "name": "[concat('nic-', parameters('setName'))]",
                                 "properties": {
                                     "primary": true,
                                     "ipConfigurations": [
                                         {
-                                            "name": "[concat(parameters('setName'), 'IpConfig')]",
+                                            "name": "[concat('ipconfig-', parameters('setName'))]",
                                             "properties": {
                                                 "subnet": {
                                                     "id": "[variables('subnetId')]"
                                                 },
                                                 "publicIpAddressConfiguration": {
-                                                    "name": "pub1",
+                                                    "name": "[concat('publicip-', parameters('setName'))]",
                                                     "properties": {
                                                         "idleTimeoutInMinutes": 15
                                                     }
@@ -151,6 +172,11 @@
                     }
                 },
                 "zoneBalance": false
+            },
+            "tags": {
+                "ApplicationName": "[parameters('applicationName')]",
+                "Network": "Public",
+                "Environment": "[parameters('environment')]"
             }
         }
     ]

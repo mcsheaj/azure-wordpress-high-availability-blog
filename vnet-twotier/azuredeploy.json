@@ -2,22 +2,16 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "virtualNetworkName": {
+        "vnetName": {
             "type": "string",
             "metadata": {
                 "description": "The resource name of your Virtual Network"
             }
         },
-        "addressPrefix": {
+        "vnetAddressPrefix": {
             "type": "string",
             "metadata": {
                 "description": "The CIDR address range for your Virtual Network"
-            }
-        },
-        "publicSecurityGroupName": {
-            "type": "string",
-            "metadata": {
-                "description": "The name of the Network Security Group for public subnet"
             }
         },
         "publicSubnetPrefix": {
@@ -26,16 +20,22 @@
                 "description": "The CIDR address range for the public subnet"
             }
         },
-        "privateSecurityGroupName": {
-            "type": "string",
-            "metadata": {
-                "description": "The name of the Network Security Group for the private subnet"
-            }
-        },
         "privateSubnetPrefix": {
             "type": "string",
             "metadata": {
                 "description": "The CIDR address range for the private subnet"
+            }
+        },
+        "applicationName": {
+            "type": "string",
+            "metadata": {
+                "description": "The value for the application name tag (e.g. WordPress)."
+            }
+        },
+        "environment": {
+            "type": "string",
+            "metadata": {
+                "description": "The value for the environment tag (e.g. Production, Test, Development, Demo, ...)."
             }
         },
         "location": {
@@ -46,11 +46,15 @@
             }
         }
     },
+    "variables":{
+        "publicSecurityGroupName": "[concat('nsg-public-', parameters('vnetName'))]",
+        "privateSecurityGroupName": "[concat('nsg-private-', parameters('vnetName'))]"
+    },
     "resources": [
         {
             "apiVersion": "2019-09-01",
             "type": "Microsoft.Network/networkSecurityGroups",
-            "name": "[parameters('publicSecurityGroupName')]",
+            "name": "[variables('publicSecurityGroupName')]",
             "location": "[parameters('location')]",
             "properties": {
                 "securityRules": [
@@ -83,17 +87,22 @@
                         }
                     }
                 ]
+            },
+            "tags": {
+                "ApplicationName": "[parameters('applicationName')]",
+                "Network": "Public",
+                "Environment": "[parameters('environment')]"
             }
         },
         {
             "apiVersion": "2019-09-01",
             "type": "Microsoft.Network/networkSecurityGroups",
-            "name": "[parameters('privateSecurityGroupName')]",
+            "name": "[variables('privateSecurityGroupName')]",
             "location": "[parameters('location')]",
             "properties": {
                 "securityRules": [
                     {
-                        "name": "ssh_allow_public_inbound_rule",
+                        "name": "ssh_allow_public_subnet_inbound_rule",
                         "properties": {
                             "description": "Allow SSH on port 22 from the Public Subnet",
                             "protocol": "Tcp",
@@ -103,20 +112,6 @@
                             "destinationAddressPrefix": "*",
                             "access": "Allow",
                             "priority": 100,
-                            "direction": "Inbound"
-                        }
-                    },
-                    {
-                        "name": "ssh_block_internet_inbound_rule",
-                        "properties": {
-                            "description": "Block SSH on port 22 from the anywhere else",
-                            "protocol": "Tcp",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "22",
-                            "sourceAddressPrefix": "Internet",
-                            "destinationAddressPrefix": "*",
-                            "access": "Deny",
-                            "priority": 110,
                             "direction": "Inbound"
                         }
                     },
@@ -135,43 +130,53 @@
                         }
                     }
                 ]
+            },
+            "tags": {
+                "ApplicationName": "[parameters('applicationName')]",
+                "Network": "Private",
+                "Environment": "[parameters('environment')]"
             }
         },
         {
             "apiVersion": "2019-09-01",
             "type": "Microsoft.Network/virtualNetworks",
-            "name": "[parameters('virtualNetworkName')]",
+            "name": "[parameters('vnetName')]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[concat('Microsoft.Network/networkSecurityGroups/', parameters('publicSecurityGroupName'))]",
-                "[concat('Microsoft.Network/networkSecurityGroups/', parameters('privateSecurityGroupName'))]"
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('publicSecurityGroupName'))]",
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('privateSecurityGroupName'))]"
             ],
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
-                        "[parameters('addressPrefix')]"
+                        "[parameters('vnetAddressPrefix')]"
                     ]
                 },
                 "subnets": [
                     {
-                        "name": "publicSubnet",
+                        "name": "[concat('subnet-public-', parameters('vnetName'))]",
                         "properties": {
                             "addressPrefix": "[parameters('publicSubnetPrefix')]",
                             "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('publicSecurityGroupName'))]"
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('publicSecurityGroupName'))]"
                             }
                         }
                     },
                     {
-                        "name": "privateSubnet",
+                        "name": "[concat('subnet-private-', parameters('vnetName'))]",
                         "properties": {
                             "addressPrefix": "[parameters('privateSubnetPrefix')]",
                             "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('privateSecurityGroupName'))]"
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('privateSecurityGroupName'))]"
                             }
                         }
                     }
                 ]
+            },
+            "tags": {
+                "ApplicationName": "[parameters('applicationName')]",
+                "Network": "Public",
+                "Environment": "[parameters('environment')]"
             }
         }
     ]

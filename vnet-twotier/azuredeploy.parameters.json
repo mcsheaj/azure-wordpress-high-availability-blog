@@ -1,0 +1,24 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vnetName": {
+            "value": "vnet-wp-prod-westus2"
+        },
+        "vnetAddressPrefix": {
+            "value": "172.28.0.0/16"
+        },
+        "publicSubnetPrefix": {
+            "value": "172.28.42.0/24"
+        },
+        "privateSubnetPrefix": {
+            "value": "172.28.43.0/24"
+        },
+        "applicationName": {
+            "value": "WordPress"
+        },
+        "environment": {
+            "value": "Production"
+        }
+    }
+}
