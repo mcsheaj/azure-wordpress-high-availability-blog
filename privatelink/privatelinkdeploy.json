@@ -1,0 +1,74 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vnetName": {
+            "type": "string"
+        },
+        "storageAccountName": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "publicSubnetName": "[concat('subnet-public-', parameters('vnetName'))]",
+        "privateSubnetName": "[concat('subnet-private-', parameters('vnetName'))]",
+        "publicSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), variables('publicSubnetName') )]",
+        "privateSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), variables('privateSubnetName') )]",
+        "publicSubnetEndpointName": "[concat('ep-stor-', variables('publicSubnetName'))]",
+        "privateSubnetEndpointName": "[concat('ep-stor-', variables('privateSubnetName'))]",
+        "publicSubnetEndpointConnectionName": "[concat(variables('publicSubnetEndpointName'), '-', deployment().name)]",
+        "privateSubnetEndpointConnectionName": "[concat(variables('privateSubnetEndpointName'), '-', deployment().name)]",
+        "publicSubnetPrivateLinkServiceId": "[concat(resourceGroup().id, '/providers/Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]",
+        "privateSubnetPrivateLinkServiceId": "[concat(resourceGroup().id, '/providers/Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2019-04-01",
+            "name": "[variables('publicSubnetEndpointName')]",
+            "type": "Microsoft.Network/privateEndpoints",
+            "location": "[resourceGroup().Location]",
+            "properties": {
+                "privateLinkServiceConnections": [
+                    {
+                        "name": "[variables('publicSubnetEndpointConnectionName')]",
+                        "properties": {
+                            "privateLinkServiceId": "[variables('publicSubnetPrivateLinkServiceId')]",
+                            "groupIds": [
+                                "blob"
+                            ]
+                        }
+                    }
+                ],
+                "manualPrivateLinkServiceConnections": [],
+                "subnet": {
+                    "id": "[variables('publicSubnetId')]"
+                }
+            }
+        },
+        {
+            "apiVersion": "2019-04-01",
+            "name": "[variables('privateSubnetEndpointName')]",
+            "type": "Microsoft.Network/privateEndpoints",
+            "location": "[resourceGroup().Location]",
+            "properties": {
+                "privateLinkServiceConnections": [
+                    {
+                        "name": "[variables('privateSubnetEndpointConnectionName')]",
+                        "properties": {
+                            "privateLinkServiceId": "[variables('privateSubnetPrivateLinkServiceId')]",
+                            "groupIds": [
+                                "blob"
+                            ]
+                        }
+                    }
+                ],
+                "manualPrivateLinkServiceConnections": [],
+                "subnet": {
+                    "id": "[variables('privateSubnetId')]"
+                }
+            }
+        }
+    ],
+    "outputs": {
+    }
+}
