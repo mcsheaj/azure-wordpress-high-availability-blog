@@ -108,7 +108,7 @@
             "type": "Microsoft.Network/privateEndpoints",
             "location": "[resourceGroup().Location]",
             "dependsOn": [
-                "[reference(variables('blobContainerPath'))]"
+                "[variables('blobContainerPath')]"
             ],
             "properties": {
                 "privateLinkServiceConnections": [
@@ -139,7 +139,7 @@
             "type": "Microsoft.Network/privateEndpoints",
             "location": "[resourceGroup().Location]",
             "dependsOn": [
-                "[reference(variables('blobContainerPath'))]"
+                "[variables('blobContainerPath')]"
             ],
             "properties": {
                 "privateLinkServiceConnections": [
