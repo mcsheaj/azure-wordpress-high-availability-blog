@@ -45,3 +45,29 @@ curl "${uri}" -X "POST" -d "${body}" -H "${auth_header}" | jq .
 az rest --method post --uri "https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Network/privateDnsZones/${resourceName}?api-version=2018-09-01"
 
 az rest --method post --uri "https://management.azure.com/providers/Microsoft.Management/managementGroups/{managementGroupName}/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2018-04-04&$filter=policyAssignmentId eq '/providers/Microsoft.Management/managementGroups/{managementGroupName}/providers/Microsoft.Authorization/policyAssignments/3132643538114acc900af638'"
+
+az login --identity
+az storage blob list --container-name blob-wp-test-eastus --account-name storwptesteastus | jq --indent 4 .
+
+         {
+            "type": "Microsoft.Network/privateDnsZones/A",
+            "apiVersion": "2018-09-01",
+            "name": "[concat(variables('privateDnsName'), '/', parameters('storageAccountName'))]",
+            "location": "global",
+            "dependsOn": [
+                "[variables('privateDnsName')]",
+                "[variables('publicSubnetEndpointName')]",
+                "[variables('privateSubnetEndpointName')]"
+            ],
+            "properties": {
+                "aRecords": [
+                    {
+                        "ipv4Address": "[reference(variables('publicSubnetEndpointName'), '2019-04-01', 'Full').networkInterfaces[0].ipConfigurations[0].properties.privateIPAddress]"
+                    },
+                    {
+                        "ipv4Address": "[reference(variables('privateSubnetEndpointName'), '2019-04-01', 'Full').networkInterfaces[0].ipConfigurations[0].properties.privateIPAddress]"
+                    }
+                ],
+                "ttl": 3600
+            }
+        }
