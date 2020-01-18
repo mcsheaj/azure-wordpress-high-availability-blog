@@ -189,29 +189,7 @@
                 },
                 "registrationEnabled": false
             }
-        },
-        {
-            "type": "Microsoft.Network/privateDnsZones/A",
-            "apiVersion": "2018-09-01",
-            "name": "[concat(variables('privateDnsName'), '/', parameters('storageAccountName'))]",
-            "location": "global",
-            "dependsOn": [
-                "[variables('privateDnsName')]",
-                "[variables('publicSubnetEndpointName')]",
-                "[variables('privateSubnetEndpointName')]"
-            ],
-            "properties": {
-                "aRecords": [
-                    {
-                        "ipv4Address": "[reference(variables('publicSubnetEndpointName'), '2019-04-01', 'Full').networkInterfaces[0].ipConfigurations[0].properties.privateIPAddress]"
-                    },
-                    {
-                        "ipv4Address": "[reference(variables('privateSubnetEndpointName'), '2019-04-01', 'Full').networkInterfaces[0].ipConfigurations[0].properties.privateIPAddress]"
-                    }
-                ],
-                "ttl": 3600
-            }
-        }    
+        }
     ],
     "outputs": {
     }
