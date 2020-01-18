@@ -5,7 +5,7 @@
         {
             "type": "Microsoft.Network/privateDnsZones/A",
             "apiVersion": "2018-09-01",
-            "name": "storwptesteastus.privatelink.blob.core.windows.net",
+            "name": "storwptesteastus.blob.core.windows.net",
             "location": "global",
             "properties": {
                 "aRecords": [
