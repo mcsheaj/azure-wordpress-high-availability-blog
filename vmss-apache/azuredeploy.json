@@ -49,13 +49,6 @@
             "metadata": {
                 "description": "The value for the environment tag (e.g. Production, Test, Development, Demo, ...)."
             }
-        },
-        "location": {
-            "type": "string",
-            "defaultValue": "[resourceGroup().location]",
-            "metadata": {
-                "description": "The region for all resources, defaults to the resource group region."
-            }
         }
     },
     "variables": {
@@ -63,8 +56,8 @@
         "capacity": "1",
         "subnetId": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/subnet-public-', parameters('vnetName'))]",
         "customData": "[concat('#!/bin/bash -xe', '
-            wget --no-cache -O /tmp/bootstrap-jumpbox.sh https://raw.githubusercontent.com/mcsheaj/azure-wordpress-high-availability-blog/master/vmss-jumpbox/scripts/bootstrap-jumpbox.sh
-            bash /tmp/bootstrap-jumpbox.sh
+            wget --no-cache -O /tmp/bootstrap-apache.sh https://raw.githubusercontent.com/mcsheaj/azure-wordpress-high-availability-blog/master/vmss-apache/scripts/bootstrap-apache.sh
+            bash /tmp/bootstrap-apache.sh
             ')]"
     },
     "resources": [
@@ -72,7 +65,7 @@
             "name": "[parameters('setName')]",
             "type": "Microsoft.Compute/virtualMachineScaleSets",
             "apiVersion": "2019-03-01",
-            "location": "[parameters('location')]",
+            "location": "[resourceGroup().location]",
             "dependsOn": [
             ],
             "sku": {

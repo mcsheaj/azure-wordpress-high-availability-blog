@@ -6,13 +6,13 @@
             "value": "vnet-wp-test-eastus"
         },
         "vnetAddressPrefix": {
-            "value": "172.28.0.0/16"
+            "value": "172.29.0.0/16"
         },
         "publicSubnetPrefix": {
-            "value": "172.28.42.0/24"
+            "value": "172.29.42.0/24"
         },
         "privateSubnetPrefix": {
-            "value": "172.28.43.0/24"
+            "value": "172.29.43.0/24"
         },
         "applicationName": {
             "value": "WordPress"
