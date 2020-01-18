@@ -165,7 +165,9 @@
             "name": "[concat(variables('privateDnsName'), '/', parameters('storageAccountName'))]",
             "location": "global",
             "dependsOn": [
-                "[variables('privateDnsName')]"
+                "[variables('privateDnsName')]",
+                "[variables('publicSubnetEndpointName')]",
+                "[variables('privateSubnetEndpointName')]"
             ],
             "properties": {
                 "aRecords": [
