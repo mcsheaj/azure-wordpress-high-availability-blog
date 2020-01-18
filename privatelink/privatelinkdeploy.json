@@ -89,6 +89,9 @@
             "name": "[variables('publicSubnetEndpointName')]",
             "type": "Microsoft.Network/privateEndpoints",
             "location": "[resourceGroup().Location]",
+            "dependsOn": [
+                "[concat(parameters('storageAccountName'), '/default/', parameters('blobContainerName'))]"
+            ],
             "properties": {
                 "privateLinkServiceConnections": [
                     {
@@ -112,6 +115,9 @@
             "name": "[variables('privateSubnetEndpointName')]",
             "type": "Microsoft.Network/privateEndpoints",
             "location": "[resourceGroup().Location]",
+            "dependsOn": [
+                "[concat(parameters('storageAccountName'), '/default/', parameters('blobContainerName'))]"
+            ],
             "properties": {
                 "privateLinkServiceConnections": [
                     {
