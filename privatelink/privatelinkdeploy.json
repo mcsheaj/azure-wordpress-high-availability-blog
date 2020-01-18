@@ -19,7 +19,8 @@
         "publicSubnetEndpointConnectionName": "[concat(variables('publicSubnetEndpointName'), '-', deployment().name)]",
         "privateSubnetEndpointConnectionName": "[concat(variables('privateSubnetEndpointName'), '-', deployment().name)]",
         "publicSubnetPrivateLinkServiceId": "[concat(resourceGroup().id, '/providers/Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]",
-        "privateSubnetPrivateLinkServiceId": "[concat(resourceGroup().id, '/providers/Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]"
+        "privateSubnetPrivateLinkServiceId": "[concat(resourceGroup().id, '/providers/Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]",
+        "privateDnsName": "privatelink.blob.core.windows.net"
     },
     "resources": [
         {
@@ -66,6 +67,29 @@
                 "subnet": {
                     "id": "[variables('privateSubnetId')]"
                 }
+            }
+        },
+        {
+            "type": "Microsoft.Network/privateDnsZones",
+            "apiVersion": "2018-09-01",
+            "name": "[variables('privateDnsName')]",
+            "location": "global",
+            "tags": {},
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+            "apiVersion": "2018-09-01",
+            "name": "[concat(variables('privateDnsName'), '/', parameters('vnetName') )]",
+            "location": "global",
+            "dependsOn": [
+                "[variables('privateDnsName')]"
+            ],
+            "properties": {
+                "virtualNetwork": {
+                    "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+                },
+                "registrationEnabled": false
             }
         }
     ],
