@@ -203,10 +203,10 @@
             "properties": {
                 "aRecords": [
                     {
-                        "ipv4Address": "[reference(variables('publicSubnetEndpointName')).networkInterfaces[0].ipConfigurations[0].properties.privateIPAddress]"
+                        "ipv4Address": "[reference(reference(variables('publicSubnetEndpointName')).networkInterfaces[0].id).ipConfigurations[0].properties.privateIPAddress]"
                     },
                     {
-                        "ipv4Address": "[reference(variables('privateSubnetEndpointName')).networkInterfaces[0].ipConfigurations[0].properties.privateIPAddress]"
+                        "ipv4Address": "[reference(reference(variables('privateSubnetEndpointName')).networkInterfaces[0].id).ipConfigurations[0].properties.privateIPAddress]"
                     }
                 ],
                 "ttl": 3600
