@@ -32,3 +32,4 @@ az group deployment create --name "dns-deployment-wp-test-eastus" --resource-gro
 az group deployment create --name "vmss-deployment-jumpbox-wp-prod-westus2" --resource-group "rg-wp-prod-westus2-001" --template-file "azuredeploy.json" --parameters @"azuredeploy.parameters.json" --handle-extended-json-format
 az group deployment create --name "vmss-deployment-jumpbox-wp-test-eastus" --resource-group "rg-wp-test-eastus-001" --template-file "azuredeploy.json" --parameters @"azuredeploy.parameters.json" --handle-extended-json-format
 
+az resource list --resource-group rg-wp-prod-westus2-001 --resource-type Microsoft.Network/privateEndpoints

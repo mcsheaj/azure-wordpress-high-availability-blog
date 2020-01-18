@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "setName": {
-            "value": "vmss-jumpbox-wp-test-eastus"
+            "value": "vmss-apache-wp-test-eastus"
         },
         "availabilityZones": {
             "value": [
