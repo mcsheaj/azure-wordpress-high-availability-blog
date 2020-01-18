@@ -7,6 +7,9 @@
         },
         "storageAccountName": {
             "value": "storwptesteastus"
+        },
+        "blobContainerName": {
+            "value": "blob-wp-test-eastus"
         }
     }
 }
