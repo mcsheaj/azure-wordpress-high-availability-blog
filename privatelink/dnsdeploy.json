@@ -1,6 +1,11 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
+    "parameters": {
+        "storageAccountName": {
+            "type": "string"
+        }
+    },
     "variables": {
         "privateDnsName": "privatelink.blob.core.windows.net"
     },
@@ -8,8 +13,11 @@
         {
             "type": "Microsoft.Network/privateDnsZones/A",
             "apiVersion": "2018-09-01",
-            "name": "[concat(variables('privateDnsName'), '/', 'storwptesteastus')]",
+            "name": "[concat(variables('privateDnsName'), '/', parameters('storageAccountName'))]",
             "location": "global",
+            "dependsOn": [
+                "[variables('privateDnsName')]"
+            ],
             "properties": {
                 "aRecords": [
                     {
