@@ -108,7 +108,7 @@
             "type": "Microsoft.Network/privateEndpoints",
             "location": "[resourceGroup().Location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), '/default/', parameters('blobContainerName'))]"
+                "[reference(variables('blobContainerPath'))]"
             ],
             "properties": {
                 "privateLinkServiceConnections": [
@@ -139,7 +139,7 @@
             "type": "Microsoft.Network/privateEndpoints",
             "location": "[resourceGroup().Location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), '/default/', parameters('blobContainerName'))]"
+                "[reference(variables('blobContainerPath'))]"
             ],
             "properties": {
                 "privateLinkServiceConnections": [
