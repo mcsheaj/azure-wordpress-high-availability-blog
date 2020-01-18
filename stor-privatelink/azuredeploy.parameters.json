@@ -10,6 +10,12 @@
         },
         "blobContainerName": {
             "value": "blob-wp-test-eastus"
+        },
+        "applicationName": {
+            "value": "WordPress"
+        },
+        "environment": {
+            "value": "Test"
         }
     }
 }
