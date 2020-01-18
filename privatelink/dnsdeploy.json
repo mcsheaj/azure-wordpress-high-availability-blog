@@ -1,39 +1,22 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
-    "parameters": {
-        "vnetName": {
-            "type": "string"
-        },
-        "storageAccountName": {
-            "type": "string"
-        }
-    },
-    "variables": {
-        "privateDnsName":"[concat(parameters('storageAccountName'),'.blob.core.windows.net')]"
-    },
     "resources": [
         {
-            "type": "Microsoft.Network/privateDnsZones",
+            "type": "Microsoft.Network/privateDnsZones/A",
             "apiVersion": "2018-09-01",
-            "name": "privatelink.blob.core.windows.net",
+            "name": "storwptesteastus.privatelink.blob.core.windows.net",
             "location": "global",
-            "tags": {},
-            "properties": {}
-        },
-        {
-            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
-            "apiVersion": "2018-09-01",
-            "name": "[concat(variables('privateDnsName'), '/', parameters('vnetName') )]",
-            "location": "global",
-            "dependsOn": [
-                "[variables('privateDnsName')]"
-            ],
             "properties": {
-                "virtualNetwork": {
-                    "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
-                },
-                "registrationEnabled": false
+                "aRecords": [
+                    {
+                        "ipv4Address": "172.28.42.4"
+                    },
+                    {
+                        "ipv4Address": "172.28.43.4"
+                    }
+                ],
+                "ttl": 3600
             }
         }
     ],
