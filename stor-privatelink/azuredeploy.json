@@ -10,6 +10,18 @@
         },
         "blobContainerName": {
             "type": "string"
+        },
+        "applicationName": {
+            "type": "string",
+            "metadata": {
+                "description": "The value for the application name tag (e.g. WordPress)."
+            }
+        },
+        "environment": {
+            "type": "string",
+            "metadata": {
+                "description": "The value for the environment tag (e.g. Production, Test, Development, Demo, ...)."
+            }
         }
     },
     "variables": {
@@ -55,6 +67,11 @@
                     "keySource": "Microsoft.Storage"
                 },
                 "accessTier": "Hot"
+            },            
+            "tags": {
+                "ApplicationName": "[parameters('applicationName')]",
+                "Network": "Azure",
+                "Environment": "[parameters('environment')]"
             }
         },
         {
@@ -108,6 +125,11 @@
                 "subnet": {
                     "id": "[variables('publicSubnetId')]"
                 }
+            },            
+            "tags": {
+                "ApplicationName": "[parameters('applicationName')]",
+                "Network": "Public",
+                "Environment": "[parameters('environment')]"
             }
         },
         {
@@ -134,14 +156,23 @@
                 "subnet": {
                     "id": "[variables('privateSubnetId')]"
                 }
+            },            
+            "tags": {
+                "ApplicationName": "[parameters('applicationName')]",
+                "Network": "Private",
+                "Environment": "[parameters('environment')]"
             }
         },
         {
             "type": "Microsoft.Network/privateDnsZones",
             "apiVersion": "2018-09-01",
             "name": "[variables('privateDnsName')]",
-            "location": "global",
-            "tags": {},
+            "location": "global",            
+            "tags": {
+                "ApplicationName": "[parameters('applicationName')]",
+                "Network": "Both",
+                "Environment": "[parameters('environment')]"
+            },
             "properties": {}
         },
         {

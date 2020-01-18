@@ -41,3 +41,7 @@ curl "${uri}" -X "POST" -d "${body}" -H "${auth_header}" | jq .
 # for future use
 #tags=$(curl -H Metadata:true "http://169.254.169.254/metadata/instance/compute/tagsList?api-version=2019-06-04" | jq .)
 #ApplicationName=$(echo ${tags} | jq '.[] | select(.name=="ApplicationName")' | jq -r .value)
+
+az rest --method post --uri "https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Network/privateDnsZones/${resourceName}?api-version=2018-09-01"
+
+az rest --method post --uri "https://management.azure.com/providers/Microsoft.Management/managementGroups/{managementGroupName}/providers/Microsoft.PolicyInsights/policyStates/latest/queryResults?api-version=2018-04-04&$filter=policyAssignmentId eq '/providers/Microsoft.Management/managementGroups/{managementGroupName}/providers/Microsoft.Authorization/policyAssignments/3132643538114acc900af638'"
