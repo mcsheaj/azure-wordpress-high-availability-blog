@@ -157,6 +157,7 @@
                         "name": "[concat('subnet-public-', parameters('vnetName'))]",
                         "properties": {
                             "addressPrefix": "[parameters('publicSubnetPrefix')]",
+                            "privateEndpointNetworkPolicies": "Disabled",
                             "networkSecurityGroup": {
                                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('publicSecurityGroupName'))]"
                             }
@@ -166,6 +167,7 @@
                         "name": "[concat('subnet-private-', parameters('vnetName'))]",
                         "properties": {
                             "addressPrefix": "[parameters('privateSubnetPrefix')]",
+                            "privateEndpointNetworkPolicies": "Disabled",
                             "networkSecurityGroup": {
                                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('privateSecurityGroupName'))]"
                             }
