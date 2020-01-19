@@ -16,12 +16,6 @@
         },
         "environment": {
             "value": "Test"
-        },
-        "adminUsername": {
-            "value": "mcsheaj"
-        },
-        "sshPublicKey": {
-            "value": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBW53KwBRdbdgEBy604/wzw9HgyA0RpSaI0JtIuAddzL3iJKG6+8UffC23577zlWw2AJXu9c9SA3Q2/00d8vFz5F943ElgOKP0JRmJ+xGQQLe/7k0qmfZZCCEO2Rg2VBpYPt9mYf8KX5i6RP17+QJABDfy0VrMv9Ht38xhbtBx3XptcaOmScJxq6+UEEfERSEhGlZCmFSBDkPiwXVi+geVFikAwcnFCXvXZANoQ9wE8FlNNcwei9UeZuSdB3SBhC1CtEdLOzd5jDQZrLhPfDnbsi44t4N5aYnoTTEIo0tyruEUDifMvXPMu/ObbNydxho0PUhNAwPPlzZHGXHswH3L mcsheaj@ip-172-24-43-139.ec2.internal"
         }
     }
 }

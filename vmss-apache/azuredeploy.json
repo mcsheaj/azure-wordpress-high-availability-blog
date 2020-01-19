@@ -47,12 +47,10 @@
     },
     "variables": {
         "setName": "[concat('vmss-apache-', skip(parameters('vnetName'), 5))]",
-        "availabilityZones": {
-            "value": [
-                "1",
-                "2"
-            ]
-        },
+        "availabilityZones": [
+            "1",
+            "2"
+        ],
         "computerNamePrefix": "[toLower(substring(concat(variables('setName'), uniqueString(resourceGroup().id)), 0, 9))]",
         "subnetId": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/subnet-public-', parameters('vnetName'))]",
         "customData": "[concat('#!/bin/bash -xe', '
