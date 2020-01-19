@@ -14,6 +14,12 @@
                 "description": "The sku for the virtual machine size you want to allocate."
             }
         },
+        "desiredCapacity": {
+            "type": "string",
+            "metadata": {
+                "description": "The minimum number of VMs to allocate."
+            }
+        },
         "applicationName": {
             "type": "string",
             "metadata": {
@@ -48,7 +54,6 @@
             ]
         },
         "computerNamePrefix": "[toLower(substring(concat(variables('setName'), uniqueString(resourceGroup().id)), 0, 9))]",
-        "capacity": "1",
         "subnetId": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/subnet-public-', parameters('vnetName'))]",
         "customData": "[concat('#!/bin/bash -xe', '
             wget --no-cache -O /tmp/bootstrap-apache.sh https://raw.githubusercontent.com/mcsheaj/azure-wordpress-high-availability-blog/master/vmss-apache/scripts/bootstrap-apache.sh
@@ -66,7 +71,7 @@
             "sku": {
                 "name": "[parameters('machineSku')]",
                 "tier": "Standard",
-                "capacity": "[int(variables('capacity'))]"
+                "capacity": "[int(parameters('desiredCapacity'))]"
             },
             "zones": "[variables('availabilityZones')]",
             "identity": {

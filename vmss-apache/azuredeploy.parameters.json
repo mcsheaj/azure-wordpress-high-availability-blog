@@ -8,6 +8,9 @@
         "machineSku": {
             "value": "Standard_B1s"
         },
+        "desiredCapacity": {
+            "value": "2"
+        },
         "applicationName": {
             "value": "WordPress"
         },
