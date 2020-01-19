@@ -89,7 +89,7 @@
                             "sourceAddressPrefix": "Internet",
                             "destinationAddressPrefix": "*",
                             "access": "Allow",
-                            "priority": 100,
+                            "priority": 120,
                             "direction": "Inbound"
                         }
                     },
@@ -160,7 +160,7 @@
                             "sourceAddressPrefix": "Internet",
                             "destinationAddressPrefix": "*",
                             "access": "Allow",
-                            "priority": 100,
+                            "priority": 120,
                             "direction": "Inbound"
                         }
                     },
