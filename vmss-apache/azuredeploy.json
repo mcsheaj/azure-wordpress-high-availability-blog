@@ -2,18 +2,6 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "setName": {
-            "type": "string",
-            "metadata": {
-                "description": "The name of the virtual machine scale set."
-            }
-        },
-        "availabilityZones": {
-            "type": "array",
-            "metadata": {
-                "description": "An array of availability zones (i.e. '[\"1\", \"2\"]')"
-            }
-        },
         "vnetName": {
             "type": "string",
             "metadata": {
@@ -24,18 +12,6 @@
             "type": "string",
             "metadata": {
                 "description": "The sku for the virtual machine size you want to allocate."
-            }
-        },
-        "adminUsername": {
-            "type": "string",
-            "metadata": {
-                "description": "The user name for the administrator account to create on each instance."
-            }
-        },
-        "sshPublicKey": {
-            "type": "string",
-            "metadata": {
-                "description": "The public key to authenticate with for the admin account."
             }
         },
         "applicationName": {
@@ -49,10 +25,29 @@
             "metadata": {
                 "description": "The value for the environment tag (e.g. Production, Test, Development, Demo, ...)."
             }
+        },
+        "adminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "The user name for the administrator account to create on each instance."
+            }
+        },
+        "sshPublicKey": {
+            "type": "string",
+            "metadata": {
+                "description": "The public key to authenticate with for the admin account."
+            }
         }
     },
     "variables": {
-        "computerNamePrefix": "[toLower(substring(concat(parameters('setName'), uniqueString(resourceGroup().id)), 0, 9))]",
+        "setName": "[concat('vmss-apache-', skip(parameters('vnetName'), 5))]",
+        "availabilityZones": {
+            "value": [
+                "1",
+                "2"
+            ]
+        },
+        "computerNamePrefix": "[toLower(substring(concat(variables('setName'), uniqueString(resourceGroup().id)), 0, 9))]",
         "capacity": "1",
         "subnetId": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/subnet-public-', parameters('vnetName'))]",
         "customData": "[concat('#!/bin/bash -xe', '
@@ -62,7 +57,7 @@
     },
     "resources": [
         {
-            "name": "[parameters('setName')]",
+            "name": "[variables('setName')]",
             "type": "Microsoft.Compute/virtualMachineScaleSets",
             "apiVersion": "2019-03-01",
             "location": "[resourceGroup().location]",
@@ -73,7 +68,7 @@
                 "tier": "Standard",
                 "capacity": "[int(variables('capacity'))]"
             },
-            "zones": "[parameters('availabilityZones')]",
+            "zones": "[variables('availabilityZones')]",
             "identity": {
                 "type": "SystemAssigned"
             },
@@ -115,18 +110,18 @@
                     "networkProfile": {
                         "networkInterfaceConfigurations": [
                             {
-                                "name": "[concat('nic-', parameters('setName'))]",
+                                "name": "[concat('nic-', variables('setName'))]",
                                 "properties": {
                                     "primary": true,
                                     "ipConfigurations": [
                                         {
-                                            "name": "[concat('ipconfig-', parameters('setName'))]",
+                                            "name": "[concat('ipconfig-', variables('setName'))]",
                                             "properties": {
                                                 "subnet": {
                                                     "id": "[variables('subnetId')]"
                                                 },
                                                 "publicIpAddressConfiguration": {
-                                                    "name": "[concat('publicip-', parameters('setName'))]",
+                                                    "name": "[concat('publicip-', variables('setName'))]",
                                                     "properties": {
                                                         "idleTimeoutInMinutes": 15
                                                     }
