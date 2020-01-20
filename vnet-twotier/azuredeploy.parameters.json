@@ -8,6 +8,9 @@
         "vnetAddressPrefix": {
             "value": "172.29.0.0/16"
         },
+        "agwSubnetPrefix": {
+            "value": "172.29.41.0/24"
+        },
         "publicSubnetPrefix": {
             "value": "172.29.42.0/24"
         },

@@ -28,7 +28,7 @@
             "type": "Microsoft.Network/publicIPAddresses",
             "apiVersion": "2019-11-01",
             "name": "[parameters('publicIPAddresses_pip_app_gw_name')]",
-            "location": "eastus2",
+            "location": "eastus",
             "sku": {
                 "name": "Basic"
             },
@@ -48,7 +48,7 @@
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2019-11-01",
             "name": "[parameters('virtualNetworks_scalesetVNET_name')]",
-            "location": "eastus2",
+            "location": "eastus",
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
@@ -112,7 +112,7 @@
             "type": "Microsoft.Compute/virtualMachineScaleSets",
             "apiVersion": "2019-07-01",
             "name": "[parameters('virtualMachineScaleSets_scaleset_name')]",
-            "location": "eastus2",
+            "location": "eastus",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_scalesetVNET_name'), 'scalesetSubnet')]",
                 "[resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_appgw_name'))]"
@@ -201,7 +201,7 @@
             "type": "Microsoft.Network/applicationGateways",
             "apiVersion": "2019-11-01",
             "name": "[parameters('applicationGateways_appgw_name')]",
-            "location": "eastus2",
+            "location": "eastus",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_scalesetVNET_name'), 'appGwSubnet')]",
                 "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_pip_app_gw_name'))]"
