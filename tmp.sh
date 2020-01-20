@@ -71,3 +71,30 @@ az storage blob list --container-name blob-wp-test-eastus --account-name storwpt
                 "ttl": 3600
             }
         }
+
+# https://negatblog.wordpress.com/2018/06/21/scale-sets-and-load-balancers/
+# create a resource group to hold our resources
+$ az group create -n appgwrg -l westus
+ 
+# create a scale set with an app gateway; by default, this includes an http
+# rule on port 80; we give the public IP address name 'pip' so we can
+# refer to it later without having to look up the name of the
+# IP address later
+$ az vmss create -g appgwrg -n scaleset --app-gateway appgw --image UbuntuLTS --generate-ssh-keys --upgrade-policy-mode Automatic --disable-overprovision --public-ip-address pip-app-gw
+ 
+# to test the load balancing rule on port 80, let's install a web server on
+# our scale set VMs using a custom script extension:
+$ az vmss extension set -g appgwrg --vmss-name scaleset --publisher "Microsoft.Azure.Extensions" --name "CustomScript" --settings "{\"commandToExecute\": \"apt-get install apache2 -y\"}"
+ 
+# we need to know the public IP address, which we can get with the
+# 'az network public-ip show' command
+$ az network public-ip show -g appgwrg -n pip
+{
+...
+ "ipAddress": "{public-ip-address}",...
+}
+ 
+# now that we have the public IP address, we can do an http request to
+# verify that we get a response back from the web server:
+$ curl {public-ip-address}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transit

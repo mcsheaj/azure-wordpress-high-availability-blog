@@ -14,6 +14,12 @@
                 "description": "The CIDR address range for your Virtual Network"
             }
         },
+        "agwSubnetPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "The CIDR address range for the dedicated application gateway subnet"
+            }
+        },
         "publicSubnetPrefix": {
             "type": "string",
             "metadata": {
@@ -40,10 +46,55 @@
         }
     },
     "variables":{
-        "publicSecurityGroupName": "[concat('nsg-public-', parameters('vnetName'))]",
-        "privateSecurityGroupName": "[concat('nsg-private-', parameters('vnetName'))]"
+        "suffix": "[skip(parameters('vnetName'), 5)]",
+        "agwSecurityGroupName": "[concat('nsg-agw-', variables('suffix'))]",
+        "publicSecurityGroupName": "[concat('nsg-public-', variables('suffix'))]",
+        "privateSecurityGroupName": "[concat('nsg-private-', variables('suffix'))]"
     },
     "resources": [
+        {
+            "apiVersion": "2019-09-01",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[variables('agwSecurityGroupName')]",
+            "location": "[resourceGroup().Location]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "http_allow_internet_inbound_rule",
+                        "properties": {
+                            "description": "Allow HTTP on port 80 from anywhere",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "80",
+                            "sourceAddressPrefix": "Internet",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 110,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "https_allow_internet_inbound_rule",
+                        "properties": {
+                            "description": "Allow HTTPS on port 443 from anywhere",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "443",
+                            "sourceAddressPrefix": "Internet",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 120,
+                            "direction": "Inbound"
+                        }
+                    }
+                ]
+            },
+            "tags": {
+                "ApplicationName": "[parameters('applicationName')]",
+                "Network": "AGW",
+                "Environment": "[parameters('environment')]"
+            }
+        },
         {
             "apiVersion": "2019-09-01",
             "type": "Microsoft.Network/networkSecurityGroups",
@@ -91,20 +142,6 @@
                             "access": "Allow",
                             "priority": 120,
                             "direction": "Inbound"
-                        }
-                    },
-                    {
-                        "name": "all_allow_outbound_rule",
-                        "properties": {
-                            "description": "Allow Outbound",
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "*",
-                            "destinationAddressPrefix": "*",
-                            "access": "Allow",
-                            "priority": 200,
-                            "direction": "Outbound"
                         }
                     }
                 ]
@@ -163,20 +200,6 @@
                             "priority": 120,
                             "direction": "Inbound"
                         }
-                    },
-                    {
-                        "name": "all_allow_outbound_rule",
-                        "properties": {
-                            "description": "Allow Outbound",
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "*",
-                            "destinationAddressPrefix": "*",
-                            "access": "Allow",
-                            "priority": 200,
-                            "direction": "Outbound"
-                        }
                     }
                 ]
             },
@@ -203,7 +226,17 @@
                 },
                 "subnets": [
                     {
-                        "name": "[concat('subnet-public-', parameters('vnetName'))]",
+                        "name": "[concat('subnet-agw-', variables('suffix'))]",
+                        "properties": {
+                            "addressPrefix": "[parameters('agwSubnetPrefix')]",
+                            "privateEndpointNetworkPolicies": "Disabled",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('agwSecurityGroupName'))]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "[concat('subnet-public-', variables('suffix'))]",
                         "properties": {
                             "addressPrefix": "[parameters('publicSubnetPrefix')]",
                             "privateEndpointNetworkPolicies": "Disabled",
@@ -213,7 +246,7 @@
                         }
                     },
                     {
-                        "name": "[concat('subnet-private-', parameters('vnetName'))]",
+                        "name": "[concat('subnet-private-', variables('suffix'))]",
                         "properties": {
                             "addressPrefix": "[parameters('privateSubnetPrefix')]",
                             "privateEndpointNetworkPolicies": "Disabled",

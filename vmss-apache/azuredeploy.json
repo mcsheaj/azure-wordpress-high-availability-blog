@@ -1,101 +1,208 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "vnetName": {
-            "type": "string",
-            "metadata": {
-                "description": "The name of the existing virtual network."
-            }
+            "defaultValue": "vnet-wp-test-eastus",
+            "type": "String"
+        },
+        "scaleSetMinCapacity": {
+            "defaultValue": "2",
+            "type": "String"
         },
         "machineSku": {
             "type": "string",
+            "defaultValue": "Standard_B1s",
             "metadata": {
                 "description": "The sku for the virtual machine size you want to allocate."
             }
         },
-        "desiredCapacity": {
-            "type": "string",
-            "metadata": {
-                "description": "The minimum number of VMs to allocate."
-            }
-        },
-        "applicationName": {
-            "type": "string",
-            "metadata": {
-                "description": "The value for the application name tag (e.g. WordPress)."
-            }
-        },
-        "environment": {
-            "type": "string",
-            "metadata": {
-                "description": "The value for the environment tag (e.g. Production, Test, Development, Demo, ...)."
-            }
-        },
         "adminUsername": {
             "type": "string",
+            "defaultValue": "mcsheaj",
             "metadata": {
                 "description": "The user name for the administrator account to create on each instance."
             }
         },
         "sshPublicKey": {
             "type": "string",
+            "defaultValue": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBW53KwBRdbdgEBy604/wzw9HgyA0RpSaI0JtIuAddzL3iJKG6+8UffC23577zlWw2AJXu9c9SA3Q2/00d8vFz5F943ElgOKP0JRmJ+xGQQLe/7k0qmfZZCCEO2Rg2VBpYPt9mYf8KX5i6RP17+QJABDfy0VrMv9Ht38xhbtBx3XptcaOmScJxq6+UEEfERSEhGlZCmFSBDkPiwXVi+geVFikAwcnFCXvXZANoQ9wE8FlNNcwei9UeZuSdB3SBhC1CtEdLOzd5jDQZrLhPfDnbsi44t4N5aYnoTTEIo0tyruEUDifMvXPMu/ObbNydxho0PUhNAwPPlzZHGXHswH3L mcsheaj@ip-172-24-43-139.ec2.internal",
             "metadata": {
                 "description": "The public key to authenticate with for the admin account."
+            }
+        },
+        "applicationName": {
+            "type": "string",
+            "defaultValue": "WordPress",
+            "metadata": {
+                "description": "The value for the application name tag (e.g. WordPress)."
+            }
+        },
+        "environment": {
+            "type": "string",
+            "defaultValue": "Test",
+            "metadata": {
+                "description": "The value for the environment tag (e.g. Production, Test, Development, Demo, ...)."
             }
         }
     },
     "variables": {
-        "setName": "[concat('vmss-apache-', skip(parameters('vnetName'), 5))]",
-        "availabilityZones": [
-            "1",
-            "2"
-        ],
-        "computerNamePrefix": "[toLower(substring(concat(variables('setName'), uniqueString(resourceGroup().id)), 0, 9))]",
-        "subnetId": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/subnet-public-', parameters('vnetName'))]",
-        "customData": "[concat('#!/bin/bash -xe', '
-            wget --no-cache -O /tmp/bootstrap-apache.sh https://raw.githubusercontent.com/mcsheaj/azure-wordpress-high-availability-blog/master/vmss-apache/scripts/bootstrap-apache.sh
-            bash /tmp/bootstrap-apache.sh
-            ')]"
+        "suffix": "[skip(parameters('vnetName'), 5)]",
+        "scaleSetName": "[concat('vmss-apache-', variables('suffix'))]",
+        "appGatewayName": "[concat('agw-apache-', variables('suffix'))]",
+        "pipName": "[concat('pip-agw-apache-', variables('suffix'))]",
+        "pipAppGwDomainLabel": "[concat('agw-apache-', variables('suffix'))]"
     },
     "resources": [
         {
-            "name": "[variables('setName')]",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('pipName')]",
+            "location": "[resourceGroup().Location]",
+            "sku": {
+                "name": "Basic"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic",
+                "idleTimeoutInMinutes": 4,
+                "dnsSettings": {
+                    "fqdn": "[concat(variables('scaleSetName'), '.cloudapp.net')]",
+                    "domainNameLabel": "[variables('pipAppGwDomainLabel')]"
+                },
+                "ipTags": []
+            },
+            "tags": {
+                "ApplicationName": "[parameters('applicationName')]",
+                "Network": "AGW",
+                "Environment": "[parameters('environment')]"
+            }
+        },
+        {
+            "type": "Microsoft.Network/applicationGateways",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('appGatewayName')]",
+            "location": "[resourceGroup().Location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), concat('subnet-agw-', variables('suffix')))]",
+                "[resourceId('Microsoft.Network/publicIPAddresses', variables('pipName'))]"
+            ],
+            "properties": {
+                "sku": {
+                    "name": "Standard_Small",
+                    "tier": "Standard",
+                    "capacity": 5
+                },
+                "gatewayIPConfigurations": [
+                    {
+                        "name": "appGwIpConfig",
+                        "properties": {
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), concat('subnet-agw-', variables('suffix')))]"
+                            }
+                        }
+                    }
+                ],
+                "frontendIPConfigurations": [
+                    {
+                        "name": "appGwFrontendIP",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('pipName'))]"
+                            }
+                        }
+                    }
+                ],
+                "frontendPorts": [
+                    {
+                        "name": "appGwFrontendPort",
+                        "properties": {
+                            "port": 80
+                        }
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "scalesetLbbPool",
+                        "properties": {
+                            "backendAddresses": []
+                        }
+                    }
+                ],
+                "backendHttpSettingsCollection": [
+                    {
+                        "name": "appGwBackendHttpSettings",
+                        "properties": {
+                            "port": 80,
+                            "protocol": "Http",
+                            "cookieBasedAffinity": "Disabled",
+                            "pickHostNameFromBackendAddress": false,
+                            "requestTimeout": 30
+                        }
+                    }
+                ],
+                "httpListeners": [
+                    {
+                        "name": "appGwHttpListener",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', variables('appGatewayName')), '/frontendIPConfigurations/appGwFrontendIP')]"
+                            },
+                            "frontendPort": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', variables('appGatewayName')), '/frontendPorts/appGwFrontendPort')]"
+                            },
+                            "protocol": "Http",
+                            "hostNames": [],
+                            "requireServerNameIndication": false
+                        }
+                    }
+                ],
+                "requestRoutingRules": [
+                    {
+                        "name": "rule1",
+                        "properties": {
+                            "ruleType": "Basic",
+                            "httpListener": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', variables('appGatewayName')), '/httpListeners/appGwHttpListener')]"
+                            },
+                            "backendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', variables('appGatewayName')), '/backendAddressPools/scalesetLbbPool')]"
+                            },
+                            "backendHttpSettings": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', variables('appGatewayName')), '/backendHttpSettingsCollection/appGwBackendHttpSettings')]"
+                            }
+                        }
+                    }
+                ]
+            },
+            "tags": {
+                "ApplicationName": "[parameters('applicationName')]",
+                "Network": "Private",
+                "Environment": "[parameters('environment')]"
+            }
+        },
+        {
             "type": "Microsoft.Compute/virtualMachineScaleSets",
             "apiVersion": "2019-03-01",
-            "location": "[resourceGroup().location]",
+            "name": "[variables('scaleSetName')]",
+            "location": "[resourceGroup().Location]",
             "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), concat('subnet-agw-', variables('suffix')))]",
+                "[resourceId('Microsoft.Network/applicationGateways', variables('appGatewayName'))]"
             ],
             "sku": {
                 "name": "[parameters('machineSku')]",
                 "tier": "Standard",
-                "capacity": "[int(parameters('desiredCapacity'))]"
-            },
-            "zones": "[variables('availabilityZones')]",
-            "identity": {
-                "type": "SystemAssigned"
+                "capacity": "[int(parameters('scaleSetMinCapacity'))]"
             },
             "properties": {
-                "overprovision": true,
+                "singlePlacementGroup": true,
                 "upgradePolicy": {
-                    "mode": "Manual"
+                    "mode": "Automatic"
                 },
                 "virtualMachineProfile": {
-                    "storageProfile": {
-                        "imageReference": {
-                            "sku": "18.04-LTS",
-                            "publisher": "Canonical",
-                            "version": "latest",
-                            "offer": "UbuntuServer"
-                        },
-                        "osDisk": {
-                            "createOption": "FromImage",
-                            "caching": "ReadWrite"
-                        }
-                    },
-                    "priority": "Regular",
                     "osProfile": {
-                        "computerNamePrefix": "[variables('computerNamePrefix')]",
+                        "computerNamePrefix": "scale67dd",
                         "adminUsername": "[parameters('adminUsername')]",
                         "linuxConfiguration": {
                             "disablePasswordAuthentication": true,
@@ -106,29 +213,45 @@
                                         "keyData": "[parameters('sshPublicKey')]"
                                     }
                                 ]
-                            }
+                            },
+                            "provisionVMAgent": true
                         },
-                        "customData": "[base64(variables('customData'))]"
+                        "secrets": []
+                    },
+                    "storageProfile": {
+                        "osDisk": {
+                            "createOption": "FromImage",
+                            "caching": "ReadWrite",
+                            "managedDisk": {
+                                "storageAccountType": "Standard_LRS"
+                            },
+                            "diskSizeGB": 30
+                        },
+                        "imageReference": {
+                            "publisher": "Canonical",
+                            "offer": "UbuntuServer",
+                            "sku": "18.04-LTS",
+                            "version": "latest"
+                        }
                     },
                     "networkProfile": {
                         "networkInterfaceConfigurations": [
                             {
-                                "name": "[concat('nic-', variables('setName'))]",
+                                "name": "[concat('nic-', variables('scaleSetName'))]",
                                 "properties": {
                                     "primary": true,
                                     "ipConfigurations": [
                                         {
-                                            "name": "[concat('ipconfig-', variables('setName'))]",
+                                            "name": "[concat('ipconfig-', variables('scaleSetName'))]",
                                             "properties": {
                                                 "subnet": {
-                                                    "id": "[variables('subnetId')]"
+                                                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), concat('subnet-agw-', variables('suffix')))]"
                                                 },
-                                                "publicIpAddressConfiguration": {
-                                                    "name": "[concat('publicip-', variables('setName'))]",
-                                                    "properties": {
-                                                        "idleTimeoutInMinutes": 15
+                                                "applicationGatewayBackendAddressPools": [
+                                                    {
+                                                        "id": "[concat(resourceId('Microsoft.Network/applicationGateways', variables('appGatewayName')), concat('/backendAddressPools/', parameters('vnetName'), 'LbbPool'))]"
                                                     }
-                                                }
+                                                ]
                                             }
                                         }
                                     ]
@@ -137,11 +260,11 @@
                         ]
                     }
                 },
-                "zoneBalance": false
+                "overprovision": false
             },
             "tags": {
                 "ApplicationName": "[parameters('applicationName')]",
-                "Network": "Public",
+                "Network": "AGW",
                 "Environment": "[parameters('environment')]"
             }
         }
