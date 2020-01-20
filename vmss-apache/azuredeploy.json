@@ -249,7 +249,7 @@
                                                 },
                                                 "applicationGatewayBackendAddressPools": [
                                                     {
-                                                        "id": "[concat(resourceId('Microsoft.Network/applicationGateways', variables('appGatewayName')), concat('/backendAddressPools/scalesetLbbPool'))]"
+                                                        "id": "[concat(resourceId('Microsoft.Network/applicationGateways', variables('appGatewayName')), '/backendAddressPools/scalesetLbbPool')]"
                                                     }
                                                 ]
                                             }
