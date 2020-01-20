@@ -43,3 +43,7 @@ curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /et
 # Install jq, and packages needed to modify apt-package sources, and the azure cli
 apt-get -y install jq  apt-transport-https lsb-release gnupg curl azure-cli
 
+apt-get -y install apache2 apache2-doc apache2-npm-prefork apache2-utils libexpat1 ssl-cert
+apt-get -y install php libapache2-mod-php php-mysql
+echo "<?php phpinfo(); ?>" > /var/www/html/info.php
+systemctl restart apache2
