@@ -85,7 +85,6 @@
             "name": "[variables('appGatewayName')]",
             "location": "[resourceGroup().Location]",
             "dependsOn": [
-                "[variables('subnetAgw')]",
                 "[resourceId('Microsoft.Network/publicIPAddresses', variables('pipName'))]"
             ],
             "properties": {
@@ -189,7 +188,6 @@
             "name": "[variables('scaleSetName')]",
             "location": "[resourceGroup().Location]",
             "dependsOn": [
-                "[variables('subnetPrivate')]",
                 "[resourceId('Microsoft.Network/applicationGateways', variables('appGatewayName'))]"
             ],
             "sku": {
