@@ -1,9 +1,0 @@
-{
-    "$schema": "https://aka.ms/azure-quickstart-templates-metadata-schema#",
-    "type": "QuickStart",
-    "itemDisplayName": "Two tier VNet (public/private)",
-    "description": "This template deploys a Virtual Network with 2 subnets, one public and one private. The only thing that actually distinguishes the public subnet from the private subnet are different network security group rules.",
-    "summary": "Install Virtual Network with public and private subnets",
-    "githubUsername": "mcsheaj",
-    "dateUpdated": "2020-01-04"
-  }
