@@ -8,7 +8,7 @@
         "machineSku": {
             "value": "Standard_B1s"
         },
-        "desiredCapacity": {
+        "scaleSetMinCapacity": {
             "value": "2"
         },
         "adminUsername": {
