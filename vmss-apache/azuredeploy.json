@@ -51,7 +51,9 @@
         "scaleSetName": "[concat('vmss-apache-', variables('suffix'))]",
         "appGatewayName": "[concat('agw-apache-', variables('suffix'))]",
         "pipName": "[concat('pip-agw-apache-', variables('suffix'))]",
-        "pipAppGwDomainLabel": "[concat('agw-apache-', variables('suffix'))]"
+        "pipAppGwDomainLabel": "[concat('agw-apache-', variables('suffix'))]",
+        "subnetAgw": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/subnet-agw-', variables('suffix'))]",
+        "subnetPrivate": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/subnet-private-', variables('suffix'))]"
     },
     "resources": [
         {
@@ -83,7 +85,7 @@
             "name": "[variables('appGatewayName')]",
             "location": "[resourceGroup().Location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), concat('subnet-agw-', variables('suffix')))]",
+                "[variables('subnetAgw')]",
                 "[resourceId('Microsoft.Network/publicIPAddresses', variables('pipName'))]"
             ],
             "properties": {
@@ -97,7 +99,7 @@
                         "name": "appGwIpConfig",
                         "properties": {
                             "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), concat('subnet-agw-', variables('suffix')))]"
+                                "id": "[variables('subnetAgw')]"
                             }
                         }
                     }
@@ -187,7 +189,7 @@
             "name": "[variables('scaleSetName')]",
             "location": "[resourceGroup().Location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), concat('subnet-agw-', variables('suffix')))]",
+                "[variables('subnetPrivate')]",
                 "[resourceId('Microsoft.Network/applicationGateways', variables('appGatewayName'))]"
             ],
             "sku": {
@@ -245,7 +247,7 @@
                                             "name": "[concat('ipconfig-', variables('scaleSetName'))]",
                                             "properties": {
                                                 "subnet": {
-                                                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), concat('subnet-agw-', variables('suffix')))]"
+                                                    "id": "[variables('subnetPrivate')]"
                                                 },
                                                 "applicationGatewayBackendAddressPools": [
                                                     {
