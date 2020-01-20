@@ -77,7 +77,7 @@
             "properties": {
                 "overprovision": false,
                 "upgradePolicy": {
-                    "mode": "Manual"
+                    "mode": "Automatic"
                 },
                 "virtualMachineProfile": {
                     "storageProfile": {

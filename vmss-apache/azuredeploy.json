@@ -202,7 +202,6 @@
             },
             "zones": "[variables('availabilityZones')]",
             "properties": {
-                "singlePlacementGroup": true,
                 "upgradePolicy": {
                     "mode": "Automatic"
                 },
