@@ -2,18 +2,6 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "setName": {
-            "type": "string",
-            "metadata": {
-                "description": "The name of the virtual machine scale set."
-            }
-        },
-        "availabilityZones": {
-            "type": "array",
-            "metadata": {
-                "description": "An array of availability zones (i.e. '[\"1\", \"2\"]')"
-            }
-        },
         "vnetName": {
             "type": "string",
             "metadata": {
@@ -59,9 +47,11 @@
         }
     },
     "variables": {
-        "computerNamePrefix": "[toLower(substring(concat(parameters('setName'), uniqueString(resourceGroup().id)), 0, 9))]",
+        "suffix": "[skip(parameters('vnetName'), 5)]",
+        "scaleSetName": "[concat('vmss-apache-', variables('suffix'))]",
+        "subnetPublic": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/subnet-private-', variables('suffix'))]",
         "capacity": "1",
-        "subnetId": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/subnet-public-', parameters('vnetName'))]",
+        "availabilityZones": ["1", "2"],
         "customData": "[concat('#!/bin/bash -xe', '
             wget --no-cache -O /tmp/bootstrap-jumpbox.sh https://raw.githubusercontent.com/mcsheaj/azure-wordpress-high-availability-blog/master/vmss-jumpbox/scripts/bootstrap-jumpbox.sh
             bash /tmp/bootstrap-jumpbox.sh
@@ -69,7 +59,7 @@
     },
     "resources": [
         {
-            "name": "[parameters('setName')]",
+            "name": "[variables('scaleSetName')]",
             "type": "Microsoft.Compute/virtualMachineScaleSets",
             "apiVersion": "2019-03-01",
             "location": "[parameters('location')]",
@@ -80,7 +70,7 @@
                 "tier": "Standard",
                 "capacity": "[int(variables('capacity'))]"
             },
-            "zones": "[parameters('availabilityZones')]",
+            "zones": "[variables('availabilityZones')]",
             "identity": {
                 "type": "SystemAssigned"
             },
@@ -104,7 +94,7 @@
                     },
                     "priority": "Regular",
                     "osProfile": {
-                        "computerNamePrefix": "[variables('computerNamePrefix')]",
+                        "computerNamePrefix": "[toLower(substring(concat('jumpbox', uniqueString(resourceGroup().id)), 0, 9))]",
                         "adminUsername": "[parameters('adminUsername')]",
                         "linuxConfiguration": {
                             "disablePasswordAuthentication": true,
@@ -122,18 +112,18 @@
                     "networkProfile": {
                         "networkInterfaceConfigurations": [
                             {
-                                "name": "[concat('nic-', parameters('setName'))]",
+                                "name": "[concat('nic-', variables('suffix'))]",
                                 "properties": {
                                     "primary": true,
                                     "ipConfigurations": [
                                         {
-                                            "name": "[concat('ipconfig-', parameters('setName'))]",
+                                            "name": "[concat('ipconfig-', variables('suffix'))]",
                                             "properties": {
                                                 "subnet": {
-                                                    "id": "[variables('subnetId')]"
+                                                    "id": "[variables('subnetPublic')]"
                                                 },
                                                 "publicIpAddressConfiguration": {
-                                                    "name": "[concat('publicip-', parameters('setName'))]",
+                                                    "name": "[concat('publicip-', variables('suffix'))]",
                                                     "properties": {
                                                         "idleTimeoutInMinutes": 15
                                                     }

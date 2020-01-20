@@ -52,6 +52,7 @@
         "appGatewayName": "[concat('agw-apache-', variables('suffix'))]",
         "pipName": "[concat('pip-agw-apache-', variables('suffix'))]",
         "pipAppGwDomainLabel": "[concat('agw-apache-', variables('suffix'))]",
+        "availabilityZones": ["1", "2"],
         "subnetAgw": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/subnet-agw-', variables('suffix'))]",
         "subnetPrivate": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/subnet-private-', variables('suffix'))]"
     },
@@ -195,6 +196,7 @@
                 "tier": "Standard",
                 "capacity": "[int(parameters('scaleSetMinCapacity'))]"
             },
+            "zones": "[variables('availabilityZones')]",
             "properties": {
                 "singlePlacementGroup": true,
                 "upgradePolicy": {
@@ -202,7 +204,7 @@
                 },
                 "virtualMachineProfile": {
                     "osProfile": {
-                        "computerNamePrefix": "scale67dd",
+                        "computerNamePrefix": "[toLower(substring(concat('apache', uniqueString(resourceGroup().id)), 0, 9))]",
                         "adminUsername": "[parameters('adminUsername')]",
                         "linuxConfiguration": {
                             "disablePasswordAuthentication": true,
