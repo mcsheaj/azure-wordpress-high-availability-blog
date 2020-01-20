@@ -54,7 +54,11 @@
         "pipAppGwDomainLabel": "[concat('agw-apache-', variables('suffix'))]",
         "availabilityZones": ["1", "2"],
         "subnetAgw": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/subnet-agw-', variables('suffix'))]",
-        "subnetPrivate": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/subnet-private-', variables('suffix'))]"
+        "subnetPrivate": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/subnet-private-', variables('suffix'))]",
+        "customData": "[concat('#!/bin/bash -xe', '
+            wget --no-cache -O /tmp/bootstrap-jumpbox.sh https://raw.githubusercontent.com/mcsheaj/azure-wordpress-high-availability-blog/master/vmss-apache/scripts/bootstrap-apache.sh
+            bash /tmp/bootstrap-jumpbox.sh
+            ')]"
     },
     "resources": [
         {
@@ -218,7 +222,7 @@
                             },
                             "provisionVMAgent": true
                         },
-                        "secrets": []
+                        "customData": "[base64(variables('customData'))]"
                     },
                     "storageProfile": {
                         "osDisk": {
