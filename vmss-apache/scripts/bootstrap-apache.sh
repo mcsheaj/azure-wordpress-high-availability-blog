@@ -1,11 +1,5 @@
 #!/bin/bash -xe
 
-# Add Universe as a package source
-add-apt-repository -y universe
-
-# Add Microsoft as a package source
-echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ bionic main" > /etc/apt/sources.list.d/azure-cli.list
-
 # Resync the package index files and upgrade all installed packages
 apt clean & apt-get -y update
 apt-get -y upgrade
@@ -18,6 +12,8 @@ iptables -A INPUT -i lo -j ACCEPT
 iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 iptables -A INPUT -p udp --dport 67:68 --sport 67:68 -j ACCEPT
 iptables -A INPUT -p tcp -m tcp --dport 22 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
 iptables -A INPUT -j DROP
 
 # Persist IP tables configuration
@@ -37,9 +33,6 @@ sed -i "s/^\[sshd\]/[sshd]\nenabled=true/" /etc/fail2ban/jail.local
 systemctl enable fail2ban
 systemctl start fail2ban
 
-# Add Microsoft as a trusted package signer
-curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.asc.gpg
-
 # Install jq, and packages needed to modify apt-package sources, and the azure cli
 apt-get -y install jq  apt-transport-https lsb-release gnupg curl azure-cli
 
@@ -47,3 +40,5 @@ apt-get -y install apache2 apache2-doc apache2-npm-prefork apache2-utils libexpa
 apt-get -y install php libapache2-mod-php php-mysql
 echo "<?php phpinfo(); ?>" > /var/www/html/info.php
 systemctl restart apache2
+
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash

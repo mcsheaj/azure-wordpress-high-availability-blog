@@ -1,11 +1,5 @@
 #!/bin/bash -xe
 
-# Add Universe as a package source
-add-apt-repository -y universe
-
-# Add Microsoft as a package source
-echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ bionic main" > /etc/apt/sources.list.d/azure-cli.list
-
 # Resync the package index files and upgrade all installed packages
 apt clean & apt-get -y update
 apt-get -y upgrade
@@ -37,9 +31,7 @@ sed -i "s/^\[sshd\]/[sshd]\nenabled=true/" /etc/fail2ban/jail.local
 systemctl enable fail2ban
 systemctl start fail2ban
 
-# Add Microsoft as a trusted package signer
-curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.asc.gpg
-
 # Install jq, and packages needed to modify apt-package sources, and the azure cli
 apt-get -y install jq  apt-transport-https lsb-release gnupg curl azure-cli
 
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
