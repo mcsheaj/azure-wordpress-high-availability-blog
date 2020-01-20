@@ -75,7 +75,7 @@
                 "type": "SystemAssigned"
             },
             "properties": {
-                "overprovision": true,
+                "overprovision": false,
                 "upgradePolicy": {
                     "mode": "Manual"
                 },
