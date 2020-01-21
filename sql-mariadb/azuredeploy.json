@@ -24,25 +24,16 @@
         "version": "10.2",
         "backupRetentionDays": "7",
         "geoRedundantBackup": "Disabled",
+        "storageAutoGrow": "Enabled",
         "databaseCharSet": "utf8",
         "databaseCollation": "utf8_general_ci"
     },
     "resources": [
         {
+            "type": "Microsoft.DBforMariaDB/servers",
             "apiVersion": "2018-06-01",
-            "kind": "",
-            "location": "[resourceGroup().Location]",
             "name": "[parameters('serverName')]",
-            "properties": {
-                "version": "[variables('version')]",
-                "administratorLogin": "[parameters('administratorLogin')]",
-                "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
-                "storageProfile": {
-                    "storageMB": "[variables('skuSizeMB')]",
-                    "backupRetentionDays": "[variables('backupRetentionDays')]",
-                    "geoRedundantBackup": "[variables('geoRedundantBackup')]"
-                }
-            },
+            "location": "[resourceGroup().Location]",
             "sku": {
                 "name": "[variables('skuName')]",
                 "tier": "[variables('skuTier')]",
@@ -50,7 +41,18 @@
                 "size": "[int(variables('skuSizeMB'))]",
                 "family": "[variables('skuFamily')]"
             },
-            "type": "Microsoft.DBforMariaDB/servers",
+            "properties": {
+                "version": "[variables('version')]",
+                "createMode": "Default",
+                "administratorLogin": "[parameters('administratorLogin')]",
+                "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
+                "storageProfile": {
+                    "storageMB": "[variables('skuSizeMB')]",
+                    "backupRetentionDays": "[variables('backupRetentionDays')]",
+                    "geoRedundantBackup": "[variables('geoRedundantBackup')]",
+                    "storageAutoGrow": "[variables('storageAutoGrow')]"
+                }
+            },
             "resources": [
                 {
                     "type": "Microsoft.DBforMariaDB/servers/databases",
@@ -65,6 +67,18 @@
                     }
                 }
             ]
+        },
+        {
+            "type": "Microsoft.DBforMariaDB/servers/firewallRules",
+            "apiVersion": "2018-06-01",
+            "name": "[concat(parameters('serverName'), '/AllowAllWindowsAzureIps')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.DBforMariaDB/servers', parameters('serverName'))]"
+            ],
+            "properties": {
+                "startIpAddress": "0.0.0.0",
+                "endIpAddress": "0.0.0.0"
+            }
         }
     ]
 }
