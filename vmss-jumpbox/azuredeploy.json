@@ -48,7 +48,7 @@
     },
     "variables": {
         "suffix": "[skip(parameters('vnetName'), 5)]",
-        "scaleSetName": "[concat('vmss-apache-', variables('suffix'))]",
+        "scaleSetName": "[concat('vmss-jumpbox-', variables('suffix'))]",
         "subnetPublic": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/subnet-private-', variables('suffix'))]",
         "capacity": "1",
         "availabilityZones": ["1", "2"],
