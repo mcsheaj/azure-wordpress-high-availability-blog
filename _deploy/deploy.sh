@@ -16,9 +16,13 @@ wget -O "azuredeploy.parameters.json" --no-cache "https://raw.githubusercontent.
 wget -O "azuredeploy.json" --no-cache "https://raw.githubusercontent.com/mcsheaj/azure-wordpress-high-availability-blog/master/vmss-jumpbox/azuredeploy.json"
 wget -O "azuredeploy.parameters.json" --no-cache "https://raw.githubusercontent.com/mcsheaj/azure-wordpress-high-availability-blog/master/vmss-jumpbox/azuredeploy.parameters.json"
 
-# download the template and parameter files for the JumpBox scale set with no caching
+# download the template and parameter files for the Apache scale set with no caching
 wget -O "azuredeploy.json" --no-cache "https://raw.githubusercontent.com/mcsheaj/azure-wordpress-high-availability-blog/master/vmss-apache/azuredeploy.json"
 wget -O "azuredeploy.parameters.json" --no-cache "https://raw.githubusercontent.com/mcsheaj/azure-wordpress-high-availability-blog/master/vmss-apache/azuredeploy.parameters.json"
+
+# download the template and parameter files for the MariaDB instance with no caching
+wget -O "azuredeploy.json" --no-cache "https://raw.githubusercontent.com/mcsheaj/azure-wordpress-high-availability-blog/master/sql-mariadb/azuredeploy.json"
+wget -O "azuredeploy.parameters.json" --no-cache "https://raw.githubusercontent.com/mcsheaj/azure-wordpress-high-availability-blog/master/sql-mariadb/azuredeploy.parameters.json"
 
 # deploy the VNet
 az group deployment create --name "vnet-deployment-wp-prod-westus2" --resource-group "rg-wp-prod-westus2-001" --template-file "azuredeploy.json" --parameters @"azuredeploy.parameters.json" --handle-extended-json-format
@@ -39,4 +43,6 @@ az group deployment create --name "vmss-deployment-jumpbox-wp-test-eastus" --res
 az group deployment create --name "vmss-deployment-apache-wp-prod-westus2" --resource-group "rg-wp-prod-westus2-001" --template-file "azuredeploy.json" --parameters @"azuredeploy.parameters.json" --handle-extended-json-format
 az group deployment create --name "vmss-deployment-apache-wp-test-eastus" --resource-group "rg-wp-test-eastus-001" --template-file "azuredeploy.json" --parameters @"azuredeploy.parameters.json" --handle-extended-json-format
 
-az resource show --resource-group rg-wp-test-eastus-001 --resource-type Microsoft.Compute/virtualMachineScaleSets --name vmssapache
+# deploy the MariaDB instance
+az group deployment create --name "sql-mariadb-deployment-wp-prod-westus2" --resource-group "rg-wp-prod-westus2-001" --template-file "azuredeploy.json" --parameters @"azuredeploy.parameters.json" --handle-extended-json-format
+az group deployment create --name "sql-mariadb-deployment-wp-test-eastus" --resource-group "rg-wp-test-eastus-001" --template-file "azuredeploy.json" --parameters @"azuredeploy.parameters.json" --handle-extended-json-format
