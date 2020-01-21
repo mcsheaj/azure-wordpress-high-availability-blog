@@ -5,9 +5,6 @@
         "administratorLogin": {
             "value": "wordpresssa"
         },
-        "administratorLoginPassword": {
-            "value": null
-        },
         "serverName": {
             "value": "sql-mariadb-wp-test-eastus"
         },
