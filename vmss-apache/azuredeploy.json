@@ -96,7 +96,7 @@
                 "sku": {
                     "name": "Standard_Small",
                     "tier": "Standard",
-                    "capacity": 5
+                    "capacity": 1
                 },
                 "gatewayIPConfigurations": [
                     {
