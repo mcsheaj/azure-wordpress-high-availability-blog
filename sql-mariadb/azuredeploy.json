@@ -1,0 +1,70 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "administratorLogin": {
+            "type": "string"
+        },
+        "administratorLoginPassword": {
+            "type": "securestring"
+        },
+        "serverName": {
+            "type": "string"
+        },
+        "databaseName": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "skuCapacity": "1",
+        "skuFamily": "Gen5",
+        "skuName": "B_Gen5_1",
+        "skuTier": "Basic",
+        "skuSizeMB": "5120",
+        "version": "10.2",
+        "backupRetentionDays": "7",
+        "geoRedundantBackup": "Disabled",
+        "databaseCharSet": "utf8",
+        "databaseCollation": "utf8_general_ci"
+    },
+    "resources": [
+        {
+            "apiVersion": "2018-06-01",
+            "kind": "",
+            "location": "[resourceGroup().Location]",
+            "name": "[parameters('serverName')]",
+            "properties": {
+                "version": "[variables('version')]",
+                "administratorLogin": "[parameters('administratorLogin')]",
+                "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
+                "storageProfile": {
+                    "storageMB": "[variables('skuSizeMB')]",
+                    "backupRetentionDays": "[variables('backupRetentionDays')]",
+                    "geoRedundantBackup": "[variables('geoRedundantBackup')]"
+                }
+            },
+            "sku": {
+                "name": "[variables('skuName')]",
+                "tier": "[variables('skuTier')]",
+                "capacity": "[int(variables('skuCapacity'))]",
+                "size": "[int(variables('skuSizeMB'))]",
+                "family": "[variables('skuFamily')]"
+            },
+            "type": "Microsoft.DBforMariaDB/servers",
+            "resources": [
+                {
+                    "type": "Microsoft.DBforMariaDB/servers/databases",
+                    "apiVersion": "2018-06-01",
+                    "name": "[concat(parameters('serverName'), '/', parameters('databaseName'))]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.DBforMariaDB/servers', parameters('serverName'))]"
+                    ],
+                    "properties": {
+                        "charset": "[variables('databaseCharSet')]",
+                        "collation": "[variables('databaseCollation')]"
+                    }
+                }
+            ]
+        }
+    ]
+}
