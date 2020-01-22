@@ -72,6 +72,13 @@ az storage blob list --container-name blob-wp-test-eastus --account-name storwpt
             }
         }
 
+
+az resource show --resource-group rg-wp-test-eastus-001 --resource-type Microsoft.Compute/virtualMachineScaleSets --name vmss-apache-wp-test-eastus | jq --indent 4 .identity
+az resource show --resource-group rg-wp-test-eastus-001 --resource-type Microsoft.Compute/virtualMachineScaleSets --name vmss-jumpbox-wp-test-eastus | jq --indent 4 .identity
+az role definition list --subscription 1e25beac-0bd5-4dbe-a039-755b538c7938 --name Contributor
+
+
+
 # https://negatblog.wordpress.com/2018/06/21/scale-sets-and-load-balancers/
 # create a resource group to hold our resources
 $ az group create -n appgwrg -l westus
@@ -89,12 +96,14 @@ $ az vmss extension set -g appgwrg --vmss-name scaleset --publisher "Microsoft.A
 # we need to know the public IP address, which we can get with the
 # 'az network public-ip show' command
 $ az network public-ip show -g appgwrg -n pip
-{
-...
- "ipAddress": "{public-ip-address}",...
-}
- 
+#{
+#...
+# "ipAddress": "{public-ip-address}",...
+#}
+
+
 # now that we have the public IP address, we can do an http request to
 # verify that we get a response back from the web server:
 $ curl {public-ip-address}
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transit
+#<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transit
+
