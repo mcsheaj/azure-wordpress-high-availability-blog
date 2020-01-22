@@ -31,7 +31,11 @@ sed -i "s/^\[sshd\]/[sshd]\nenabled=true/" /etc/fail2ban/jail.local
 systemctl enable fail2ban
 systemctl start fail2ban
 
-# Install jq, and packages needed to modify apt-package sources, and the azure cli
-apt-get -y install jq  apt-transport-https lsb-release gnupg curl azure-cli
+# Install jq
+apt-get -y install jq
 
+# Install packages needed to modify apt-package sources
+apt-get -y install apt-transport-https lsb-release gnupg curl
+
+# Install the CLI
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
