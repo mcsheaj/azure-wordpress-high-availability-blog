@@ -36,18 +36,25 @@ systemctl start fail2ban
 # Install jq, and packages needed to modify apt-package sources, and the azure cli
 apt-get -y install jq  apt-transport-https lsb-release gnupg curl azure-cli
 
+# Install apache and php
 apt-get -y install apache2 apache2-doc apache2-utils libexpat1 ssl-cert
 apt-get -y install php libapache2-mod-php php-mysql
 
+# Add info.php so we can get our IP
 echo "<?php phpinfo(); ?>" > /var/www/html/info.php
+
+# Configure apache for index.php
 sed -i "s/DirectoryIndex/DirectoryIndex index.php/" /etc/apache2/mods-enabled/dir.conf
 
+# Download wordpress and install it in /var/www/html
 wget -O /tmp/latest.tar.gz http://wordpress.org/latest.tar.gz
 tar -xzf /tmp/latest.tar.gz
 rm -rf /var/www/html/wp-*
 mv /tmp/wordpress/* /var/www/html
 chown -R www-data:www-data /var/www/html
 
+# Restart apache
 systemctl restart apache2
 
+# Install the azure CLI
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
