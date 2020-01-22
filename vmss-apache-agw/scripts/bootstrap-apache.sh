@@ -38,7 +38,16 @@ apt-get -y install jq  apt-transport-https lsb-release gnupg curl azure-cli
 
 apt-get -y install apache2 apache2-doc apache2-npm-prefork apache2-utils libexpat1 ssl-cert
 apt-get -y install php libapache2-mod-php php-mysql
+
 echo "<?php phpinfo(); ?>" > /var/www/html/info.php
+sed -i "s/DirectoryIndex/DirectoryIndex index.php/" /etc/apache2/mods-enabled/dir.conf
+
+wget -O /tmp/latest.tar.gz http://wordpress.org/latest.tar.gz
+tar -xzf /tmp/latest.tar.gz
+rm -rf /var/www/html/wp-*
+mv /tmp/wordpress/* /var/www/html
+chown -R www-data:www-data /var/www/html
+
 systemctl restart apache2
 
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
