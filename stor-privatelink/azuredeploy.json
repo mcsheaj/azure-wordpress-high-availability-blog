@@ -31,8 +31,9 @@
         }
     },
     "variables": {
-        "publicSubnetName": "[concat('subnet-public-', parameters('vnetName'))]",
-        "privateSubnetName": "[concat('subnet-private-', parameters('vnetName'))]",
+        "suffix": "[skip(parameters('vnetName'), 5)]",
+        "publicSubnetName": "[concat('subnet-public-', variables('suffix'))]",
+        "privateSubnetName": "[concat('subnet-private-', variables('suffix'))]",
         "publicSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), variables('publicSubnetName') )]",
         "privateSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), variables('privateSubnetName') )]",
         "publicSubnetEndpointName": "[concat('ep-stor-', variables('publicSubnetName'))]",
