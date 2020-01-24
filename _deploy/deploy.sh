@@ -115,7 +115,7 @@ az group deployment create \
     --template-file "azuredeploy.json" \
     --parameters @"azuredeploy.parameters.json"
 
-    # download the template and parameter files for the Privatelink DNS address records with no caching
+# download the template and parameter files for the Privatelink DNS address records with no caching
 wget \
     --output-document="azuredeploy.json" \
     --no-cache \
@@ -127,15 +127,12 @@ wget \
 
 # deploy DNS address records for the PrivateLink endpoings
 az group deployment create \
-    --name "dns-arecords-deployment-wp-test-eastus" \
-    --resource-group "rg-wp-test-eastus-001" \
-    --template-file "azuredeploy.json" \
-    --parameters @"azuredeploy.parameters.json"
-az group deployment create \
     --name "dns-arecords-deployment-wp-test-westus2" \
     --resource-group "rg-wp-test-westus2-001" \
     --template-file "azuredeploy.json" \
     --parameters @"azuredeploy.parameters.json"
-
-
-
+az group deployment create \
+    --name "dns-arecords-deployment-wp-test-eastus" \
+    --resource-group "rg-wp-test-eastus-001" \
+    --template-file "azuredeploy.json" \
+    --parameters @"azuredeploy.parameters.json"
