@@ -44,6 +44,7 @@ echo "<?php phpinfo(); ?>" > /var/www/html/info.php
 sed -i "s/DirectoryIndex/DirectoryIndex index.php/" /etc/apache2/mods-enabled/dir.conf
 
 # Download wordpress and install it in /var/www/html
+cd /tmp
 wget -O /tmp/latest.tar.gz http://wordpress.org/latest.tar.gz
 tar -xzf /tmp/latest.tar.gz
 rm -rf /var/www/html/wp-*
