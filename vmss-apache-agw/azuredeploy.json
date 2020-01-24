@@ -207,6 +207,9 @@
                 "capacity": "[int(parameters('scaleSetMinCapacity'))]"
             },
             "zones": "[variables('availabilityZones')]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
             "properties": {
                 "upgradePolicy": {
                     "mode": "Automatic"
