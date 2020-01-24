@@ -43,6 +43,7 @@
             },
             "properties": {
                 "version": "[variables('version')]",
+                "sslEnforcement": "Disabled",
                 "createMode": "Default",
                 "administratorLogin": "[parameters('administratorLogin')]",
                 "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
