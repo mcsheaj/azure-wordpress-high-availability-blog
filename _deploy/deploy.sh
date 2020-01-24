@@ -46,6 +46,28 @@ az group deployment create \
     --parameters @"azuredeploy.parameters.json" \
     --handle-extended-json-format
 
+# download the template and parameter files for the MariaDB instance with no caching
+wget \
+    --output-document="azuredeploy.json" \
+    --no-cache \
+    "https://raw.githubusercontent.com/mcsheaj/azure-wordpress-high-availability-blog/master/sql-mariadb/azuredeploy.json"
+wget \
+    --output-document="azuredeploy.parameters.json" \
+    --no-cache \
+    "https://raw.githubusercontent.com/mcsheaj/azure-wordpress-high-availability-blog/master/sql-mariadb/azuredeploy.parameters.json"
+
+# deploy the MariaDB instance
+az group deployment create \
+    --name "sql-mariadb-deployment-wp-prod-westus2" \
+    --resource-group "rg-wp-prod-westus2-001" \
+    --template-file "azuredeploy.json" \
+    --parameters @"azuredeploy.parameters.json"
+az group deployment create \
+    --name "sql-mariadb-deployment-wp-test-eastus" \
+    --resource-group "rg-wp-test-eastus-001" \
+    --template-file "azuredeploy.json" \
+    --parameters @"azuredeploy.parameters.json"
+
 # download the template and parameter files for the Apache scale set with no caching
 wget \
     --output-document="azuredeploy.json" \
@@ -70,27 +92,6 @@ az group deployment create \
     --parameters @"azuredeploy.parameters.json" \
     --handle-extended-json-format
 
-# download the template and parameter files for the MariaDB instance with no caching
-wget \
-    --output-document="azuredeploy.json" \
-    --no-cache \
-    "https://raw.githubusercontent.com/mcsheaj/azure-wordpress-high-availability-blog/master/sql-mariadb/azuredeploy.json"
-wget \
-    --output-document="azuredeploy.parameters.json" \
-    --no-cache \
-    "https://raw.githubusercontent.com/mcsheaj/azure-wordpress-high-availability-blog/master/sql-mariadb/azuredeploy.parameters.json"
-
-# deploy the MariaDB instance
-az group deployment create \
-    --name "sql-mariadb-deployment-wp-prod-westus2" \
-    --resource-group "rg-wp-prod-westus2-001" \
-    --template-file "azuredeploy.json" \
-    --parameters @"azuredeploy.parameters.json"
-az group deployment create \
-    --name "sql-mariadb-deployment-wp-test-eastus" \
-    --resource-group "rg-wp-test-eastus-001" \
-    --template-file "azuredeploy.json" \
-    --parameters @"azuredeploy.parameters.json"
 
 # download the template and parameter files for the Storage and Privatelink with no caching
 wget \
