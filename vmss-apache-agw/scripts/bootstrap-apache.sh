@@ -49,7 +49,8 @@ wget -O /tmp/latest.tar.gz http://wordpress.org/latest.tar.gz
 tar -xzf /tmp/latest.tar.gz
 rm -rf /var/www/html/wp-*
 mv /tmp/wordpress/* /var/www/html
-chown -R www-data:www-data /var/www/html
+chown -R www-data:root /var/www/html
+chmod 775 /var/www/html
 
 # Restart apache
 systemctl restart apache2
