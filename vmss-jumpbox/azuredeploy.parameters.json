@@ -8,6 +8,9 @@
         "jumpboxMachineSku": {
             "value": "Standard_B1s"
         },
+        "storageAccountName": {
+            "value": "storwptesteastus"
+        },
         "adminUsername": {
             "value": "mcsheaj"
         },
