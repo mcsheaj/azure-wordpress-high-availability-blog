@@ -63,8 +63,8 @@ cd /var/www/html
 mv wp-config-sample.php wp-config.php 
 sed -i "s/define( *'DB_USER', '.*' *);/define( 'DB_USER', '${DB_USER}' );/" wp-config.php 
 sed -i "s/define( *'DB_PASSWORD', '.*' *);/define( 'DB_PASSWORD', '${DB_PASSWORD}' );/" wp-config.php 
-sed -i "s/define( *'DB_NAME', '.*' *);/define( 'DB_NAME', '${DB_DATABASE}' );/" wp-config.php 
-sed -i "s/define( *'DB_HOST', '.*' *);/define( 'DB_HOST', '${DB_SERVER}' );/" wp-config.php 
+sed -i "s/define( *'DB_NAME', '.*' *);/define( 'DB_NAME', '${DB_NAME}' );/" wp-config.php 
+sed -i "s/define( *'DB_HOST', '.*' *);/define( 'DB_HOST', '${DB_HOST}' );/" wp-config.php 
 
 # Generate Auth keys and salts
 SALT=$(curl -s -L https://api.wordpress.org/secret-key/1.1/salt/)
