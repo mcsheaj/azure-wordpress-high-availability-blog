@@ -91,7 +91,7 @@ az resource show \
     | jq --indent 4 .
 
 
-az resource show --resource-group rg-wp-test-eastus-001 --resource-type Microsoft.Compute/virtualMachineScaleSets --name vmss-jumpbox-wp-test-eastus | jq --indent 4 .
+az resource show --resource-group rg-wp-test-eastus-001 --resource-type Microsoft.Compute/virtualMachineScaleSets --name vmss-jumpbox-wp-test-eastus | jq --indent 4 .identity
 az role definition list --subscription 1e25beac-0bd5-4dbe-a039-755b538c7938 --name Contributor
 
 
