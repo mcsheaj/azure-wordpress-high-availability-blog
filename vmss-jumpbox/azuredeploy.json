@@ -154,7 +154,7 @@
         {
             "type": "Microsoft.Storage/storageAccounts/providers/roleAssignments",
             "apiVersion": "2018-09-01-preview",
-            "name": "[guid(variables('scaleSetName'), subscription(), resourceGroup().id, variables('suffix'))]",
+            "name": "[guid(resourceGroup().id, deployment().name)]",
             "dependsOn": [
                 "[resourceId('Microsoft.Compute/virtualMachineScaleSets', variables('scaleSetName'))]"
             ],
