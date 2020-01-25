@@ -193,9 +193,13 @@
         }
     ],
     "outputs": {
-        "publicEndPointNicID": {
+        "publicEndPointNicId": {
             "type": "string",
             "value": "[reference(variables('publicSubnetEndpointName')).networkInterfaces[0].id]"
+        },
+        "publicEndPointIp": {
+            "type": "string",
+            "value": "[reference(reference(variables('publicSubnetEndpointName')).networkInterfaces[0].id).ipConfigurations[0].privateIPAddressid]"
         }
     }
 }
