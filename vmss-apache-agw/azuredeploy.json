@@ -56,8 +56,8 @@
         "subnetAgw": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/subnet-agw-', variables('suffix'))]",
         "subnetPrivate": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/subnet-private-', variables('suffix'))]",
         "customData": "[concat('#!/bin/bash -xe', '
-            wget --no-cache -O /tmp/bootstrap-jumpbox.sh https://raw.githubusercontent.com/mcsheaj/azure-wordpress-high-availability-blog/master/vmss-apache-agw/scripts/bootstrap-apache.sh
-            bash /tmp/bootstrap-jumpbox.sh
+            wget --no-cache -O /tmp/bootstrap-apache.sh https://raw.githubusercontent.com/mcsheaj/azure-wordpress-high-availability-blog/master/vmss-apache-agw/scripts/bootstrap-apache.sh
+            bash /tmp/bootstrap-apache.sh
             ')]"
     },
     "resources": [
@@ -207,6 +207,9 @@
                 "capacity": "[int(parameters('scaleSetMinCapacity'))]"
             },
             "zones": "[variables('availabilityZones')]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
             "properties": {
                 "upgradePolicy": {
                     "mode": "Automatic"
