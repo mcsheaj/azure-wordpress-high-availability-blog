@@ -88,7 +88,7 @@ az resource show \
     --resource-group 'rg-wp-test-eastus-001' \
     --resource-type 'Microsoft.Network/privateEndpoints' \
     --name 'ep-stor-subnet-public-wp-test-eastus' \
-    | jq --indent 4 .identity
+    | jq --indent 4 .
 
 
 az resource show --resource-group rg-wp-test-eastus-001 --resource-type Microsoft.Compute/virtualMachineScaleSets --name vmss-jumpbox-wp-test-eastus | jq --indent 4 .
