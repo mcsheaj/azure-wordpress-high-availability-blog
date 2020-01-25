@@ -1,8 +1,6 @@
-#!/bin/bash -e
+#!/bin/bash
 
 set -x
-
-# Turn off bash history
 set +o history
 
 # Restrict access to the cloud init log file
@@ -87,6 +85,3 @@ apt-get -y install apt-transport-https lsb-release gnupg curl
 
 # Install the CLI
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-
-# Turn bash history back on
-set -o history
