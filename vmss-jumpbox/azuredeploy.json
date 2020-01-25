@@ -156,7 +156,7 @@
             "apiVersion": "2018-09-01-preview",
             "name": "[concat(parameters('storageAccountName'), '/Microsoft.Authorization/vmss-apache-agw-', reference(variables('scaleSetName'), '2017-12-01', 'Full').identity.principalId)]",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+                "[resourceId('Microsoft.Compute/virtualMachineScaleSets', variables('scaleSetName'))]"
             ],
             "properties": {
                 "roleDefinitionId": "[variables('contributor')]",
