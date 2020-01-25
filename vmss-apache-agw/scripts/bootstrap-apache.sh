@@ -1,4 +1,6 @@
-#!/bin/bash -xe
+#!/bin/bash -e
+
+set -x
 
 # Turn off bash history
 set +o history
