@@ -82,7 +82,7 @@
             '#!/bin/bash -xe
             export DB_HOST=', parameters('dbHost'), '.mariadb.database.azure.com
             export DB_NAME=', parameters('dbName'), '
-            export DB_USER=', parameters('dbUser'), '
+            export DB_USER=', parameters('dbUser'), '@', parameters('dbHost'),'
             export DB_PASSWORD=', parameters('dbPassword'), '
             wget --no-cache -O /tmp/bootstrap-apache.sh https://raw.githubusercontent.com/mcsheaj/azure-wordpress-high-availability-blog/master/vmss-apache-agw/scripts/bootstrap-apache.sh
             bash /tmp/bootstrap-apache.sh
