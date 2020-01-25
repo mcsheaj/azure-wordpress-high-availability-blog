@@ -4,12 +4,6 @@
     "parameters": {
         "storageAccountName": {
             "value": "storwptesteastus"
-        },
-        "endpoint1Ip": {
-            "value": "172.29.42.4"
-        },
-        "endpoint2Ip": {
-            "value": "172.29.43.7"
         }
     }
 }
