@@ -72,7 +72,18 @@ az storage blob list --container-name blob-wp-test-eastus --account-name storwpt
             }
         }
 
+az storage blob upload \
+    --container-name blob-wp-test-eastus \
+     --account-name storwptesteastus \
+    --name wp-config.php \
+    --file wp-config.php
 
+az storage blob download \
+    --container-name blob-wp-test-eastus \
+     --account-name storwptesteastus \
+    --name wp-config.php \
+    --file wp-config.php
+    
 az resource show \
     --resource-group 'rg-wp-test-eastus-001' \
     --resource-type 'Microsoft.Compute/virtualMachineScaleSets' \
