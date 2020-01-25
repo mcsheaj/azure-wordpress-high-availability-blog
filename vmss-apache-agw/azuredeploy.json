@@ -81,10 +81,13 @@
         "appGatewayName": "[concat('agw-apache-', variables('suffix'))]",
         "pipName": "[concat('pip-agw-apache-', variables('suffix'))]",
         "pipAppGwDomainLabel": "[concat('agw-apache-', variables('suffix'))]",
-        "availabilityZones": ["1", "2"],
+        "availabilityZones": [
+            "1",
+            "2"
+        ],
         "subnetAgw": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/subnet-agw-', variables('suffix'))]",
         "subnetPrivate": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/subnet-private-', variables('suffix'))]",
-        "contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",      
+        "contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
         "customData": "[concat(
             '#!/bin/bash -xe
             export DB_HOST=', parameters('dbHost'), '.mariadb.database.azure.com
@@ -111,7 +114,8 @@
                     "fqdn": "[concat(variables('scaleSetName'), '.cloudapp.net')]",
                     "domainNameLabel": "[variables('pipAppGwDomainLabel')]"
                 },
-                "ipTags": []
+                "ipTags": [
+                ]
             },
             "tags": {
                 "ApplicationName": "[parameters('applicationName')]",
@@ -166,7 +170,8 @@
                     {
                         "name": "scalesetLbbPool",
                         "properties": {
-                            "backendAddresses": []
+                            "backendAddresses": [
+                            ]
                         }
                     }
                 ],
@@ -198,7 +203,8 @@
                                 "id": "[concat(resourceId('Microsoft.Network/applicationGateways', variables('appGatewayName')), '/frontendPorts/appGwFrontendPort')]"
                             },
                             "protocol": "Http",
-                            "hostNames": [],
+                            "hostNames": [
+                            ],
                             "requireServerNameIndication": false
                         }
                     }
@@ -248,6 +254,11 @@
             "properties": {
                 "upgradePolicy": {
                     "mode": "Automatic"
+                },
+                "scaleInPolicy": {
+                    "rules": [
+                        "OldestVM"
+                    ]
                 },
                 "virtualMachineProfile": {
                     "osProfile": {
@@ -315,6 +326,70 @@
                 "ApplicationName": "[parameters('applicationName')]",
                 "Network": "AGW",
                 "Environment": "[parameters('environment')]"
+            }
+        },
+        {
+            "type": "Microsoft.Insights/autoscaleSettings",
+            "apiVersion": "2015-04-01",
+            "name": "[concat(variables('scaleSetName'), '-autoscale')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachineScaleSets/', variables('scaleSetName'))]"
+            ],
+            "properties": {
+                "name": "[concat(variables('scaleSetName'), '-autoscale')]",
+                "targetResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', variables('scaleSetName'))]",
+                "enabled": true,
+                "profiles": [
+                    {
+                        "name": "scale-based-on-cpu",
+                        "capacity": {
+                            "minimum": "2",
+                            "maximum": "5",
+                            "default": "2"
+                        },
+                        "rules": [
+                            {
+                                "metricTrigger": {
+                                    "metricName": "Percentage CPU",
+                                    "metricNamespace": "",
+                                    "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', variables('scaleSetName'))]",
+                                    "timeGrain": "PT1M",
+                                    "statistic": "Average",
+                                    "timeWindow": "PT5M",
+                                    "timeAggregation": "Average",
+                                    "operator": "GreaterThan",
+                                    "threshold": 60
+                                },
+                                "scaleAction": {
+                                    "direction": "Increase",
+                                    "type": "ChangeCount",
+                                    "value": "1",
+                                    "cooldown": "PT5M"
+                                }
+                            },
+                            {
+                                "metricTrigger": {
+                                    "metricName": "Percentage CPU",
+                                    "metricNamespace": "",
+                                    "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', variables('scaleSetName'))]",
+                                    "timeGrain": "PT1M",
+                                    "statistic": "Average",
+                                    "timeWindow": "PT5M",
+                                    "timeAggregation": "Average",
+                                    "operator": "LessThan",
+                                    "threshold": 30
+                                },
+                                "scaleAction": {
+                                    "direction": "Decrease",
+                                    "type": "ChangeCount",
+                                    "value": "1",
+                                    "cooldown": "PT5M"
+                                }
+                            }
+                        ]
+                    }
+                ]
             }
         },
         {
