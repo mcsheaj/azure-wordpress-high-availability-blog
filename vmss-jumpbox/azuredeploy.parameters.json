@@ -5,7 +5,7 @@
         "vnetName": {
             "value": "vnet-wp-test-eastus"
         },
-        "machineSku": {
+        "jumpboxMachineSku": {
             "value": "Standard_B1s"
         },
         "adminUsername": {

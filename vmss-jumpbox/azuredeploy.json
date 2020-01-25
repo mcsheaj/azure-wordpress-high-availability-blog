@@ -8,10 +8,16 @@
                 "description": "The name of the existing virtual network."
             }
         },
-        "machineSku": {
+        "jumpboxMachineSku": {
             "type": "string",
             "metadata": {
                 "description": "The sku for the virtual machine size you want to allocate."
+            }
+        },
+        "storageAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the storage account to be used for backups and other shared assets."
             }
         },
         "adminUsername": {
@@ -52,6 +58,7 @@
         "subnetPublic": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/subnet-public-', variables('suffix'))]",
         "capacity": "1",
         "availabilityZones": ["1", "2"],
+        "contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",        
         "customData": "[concat('#!/bin/bash -xe', '
             wget --no-cache -O /tmp/bootstrap-jumpbox.sh https://raw.githubusercontent.com/mcsheaj/azure-wordpress-high-availability-blog/master/vmss-jumpbox/scripts/bootstrap-jumpbox.sh
             bash /tmp/bootstrap-jumpbox.sh
@@ -66,7 +73,7 @@
             "dependsOn": [
             ],
             "sku": {
-                "name": "[parameters('machineSku')]",
+                "name": "[parameters('jumpboxMachineSku')]",
                 "tier": "Standard",
                 "capacity": "[int(variables('capacity'))]"
             },
@@ -142,6 +149,18 @@
                 "ApplicationName": "[parameters('applicationName')]",
                 "Network": "Public",
                 "Environment": "[parameters('environment')]"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/providers/roleAssignments",
+            "apiVersion": "2018-09-01-preview",
+            "name": "[concat(parameters('storageAccountName'), '/Microsoft.Authorization/vmss-apache-agw-', reference(variables('scaleSetName'), '2017-12-01', 'Full').identity.principalId)]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[variables('contributor')]",
+                "principalId": "[reference(variables('scaleSetName'), '2017-12-01', 'Full').identity.principalId]"
             }
         }
     ]

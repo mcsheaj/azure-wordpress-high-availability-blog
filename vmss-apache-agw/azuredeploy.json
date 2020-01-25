@@ -8,16 +8,22 @@
                 "description": "The name of the VNet resource into which the scale set should be installed."
             }
         },
-        "machineSku": {
+        "apacheMachineSku": {
             "type": "string",
             "metadata": {
                 "description": "The sku for the virtual machine size you want to allocate."
             }
         },
-        "scaleSetMinCapacity": {
+        "apacheMinCapacity": {
             "type": "String",
             "metadata": {
                 "description": "The minimum number of instances to be spun up at any one time"
+            }
+        },
+        "storageAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the storage account to be used for backups and other shared assets."
             }
         },
         "dbHost": {
@@ -78,6 +84,7 @@
         "availabilityZones": ["1", "2"],
         "subnetAgw": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/subnet-agw-', variables('suffix'))]",
         "subnetPrivate": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/subnet-private-', variables('suffix'))]",
+        "contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",        
         "customData": "[concat(
             '#!/bin/bash -xe
             export DB_HOST=', parameters('dbHost'), '.mariadb.database.azure.com
@@ -230,9 +237,9 @@
                 "[resourceId('Microsoft.Network/applicationGateways', variables('appGatewayName'))]"
             ],
             "sku": {
-                "name": "[parameters('machineSku')]",
+                "name": "[parameters('apacheMachineSku')]",
                 "tier": "Standard",
-                "capacity": "[int(parameters('scaleSetMinCapacity'))]"
+                "capacity": "[int(parameters('apacheMinCapacity'))]"
             },
             "zones": "[variables('availabilityZones')]",
             "identity": {
@@ -308,6 +315,18 @@
                 "ApplicationName": "[parameters('applicationName')]",
                 "Network": "AGW",
                 "Environment": "[parameters('environment')]"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/providers/roleAssignments",
+            "apiVersion": "2018-09-01-preview",
+            "name": "[concat(parameters('storageAccountName'), '/Microsoft.Authorization/vmss-apache-agw-', reference(variables('scaleSetName'), '2017-12-01', 'Full').identity.principalId)]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[variables('contributor')]",
+                "principalId": "[reference(variables('scaleSetName'), '2017-12-01', 'Full').identity.principalId]"
             }
         }
     ]

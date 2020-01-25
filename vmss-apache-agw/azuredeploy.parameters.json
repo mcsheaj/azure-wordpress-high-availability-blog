@@ -5,11 +5,14 @@
         "vnetName": {
             "value": "vnet-wp-test-eastus"
         },
-        "machineSku": {
+        "apacheMachineSku": {
             "value": "Standard_B1s"
         },
-        "scaleSetMinCapacity": {
+        "apacheMinCapacity": {
             "value": "2"
+        },
+        "storageAccountName": {
+            "value": "storwptesteastus"
         },
         "dbHost": {
             "value": "sql-mariadb-wp-test-eastus"
