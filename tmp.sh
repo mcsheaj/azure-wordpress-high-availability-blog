@@ -86,12 +86,12 @@ az storage blob download \
     
 az resource show \
     --resource-group 'rg-wp-test-eastus-001' \
-    --resource-type 'Microsoft.Compute/virtualMachineScaleSets' \
-    --name 'vmss-apache-wp-test-eastus' \
+    --resource-type 'Microsoft.Network/privateEndpoints' \
+    --name 'ep-stor-subnet-public-wp-test-eastus' \
     | jq --indent 4 .identity
 
 
-az resource show --resource-group rg-wp-test-eastus-001 --resource-type Microsoft.Compute/virtualMachineScaleSets --name vmss-jumpbox-wp-test-eastus | jq --indent 4 .identity
+az resource show --resource-group rg-wp-test-eastus-001 --resource-type Microsoft.Compute/virtualMachineScaleSets --name vmss-jumpbox-wp-test-eastus | jq --indent 4 .
 az role definition list --subscription 1e25beac-0bd5-4dbe-a039-755b538c7938 --name Contributor
 
 
