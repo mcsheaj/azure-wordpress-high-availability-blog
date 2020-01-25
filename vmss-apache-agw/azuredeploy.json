@@ -84,7 +84,7 @@
         "availabilityZones": ["1", "2"],
         "subnetAgw": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/subnet-agw-', variables('suffix'))]",
         "subnetPrivate": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/subnet-private-', variables('suffix'))]",
-        "contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",        
+        "contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",      
         "customData": "[concat(
             '#!/bin/bash -xe
             export DB_HOST=', parameters('dbHost'), '.mariadb.database.azure.com
@@ -320,13 +320,13 @@
         {
             "type": "Microsoft.Storage/storageAccounts/providers/roleAssignments",
             "apiVersion": "2018-09-01-preview",
-            "name": "[concat(parameters('storageAccountName'), '/Microsoft.Authorization/vmss-apache-agw-principle-', variables('suffix'))]",
+            "name": "[guid(variables('scaleSetName'), subscription(), resourceGroup().id, variables('suffix'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.Compute/virtualMachineScaleSets', variables('scaleSetName'))]"
             ],
             "properties": {
                 "roleDefinitionId": "[variables('contributor')]",
-                "principalId": "[reference(variables('scaleSetName'), '2017-12-01', 'Full').identity.principalId]"
+                "principalId": "[reference(variables('scaleSetName')).identity.principalId]"
             }
         }
     ]
