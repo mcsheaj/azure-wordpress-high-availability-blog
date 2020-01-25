@@ -2,17 +2,29 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "administratorLogin": {
-            "type": "string"
+        "dbHost": {
+            "type": "string",
+            "metadata": {
+                "description": "The host name of the MariaDB instance."
+            }
         },
-        "administratorLoginPassword": {
-            "type": "securestring"
+        "dbName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the database that will contain the WordPress tables."
+            }
         },
-        "serverName": {
-            "type": "string"
+        "dbUser": {
+            "type": "string",
+            "metadata": {
+                "description": "The user name that WordPress will use to connect to the database."
+            }
         },
-        "databaseName": {
-            "type": "string"
+        "dbPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The password for the database admin."
+            }
         }
     },
     "variables": {
@@ -32,7 +44,7 @@
         {
             "type": "Microsoft.DBforMariaDB/servers",
             "apiVersion": "2018-06-01",
-            "name": "[parameters('serverName')]",
+            "name": "[parameters('dbHost')]",
             "location": "[resourceGroup().Location]",
             "sku": {
                 "name": "[variables('skuName')]",
@@ -45,8 +57,8 @@
                 "version": "[variables('version')]",
                 "sslEnforcement": "Disabled",
                 "createMode": "Default",
-                "administratorLogin": "[parameters('administratorLogin')]",
-                "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
+                "administratorLogin": "[parameters('dbUser')]",
+                "administratorLoginPassword": "[parameters('dbPassword')]",
                 "storageProfile": {
                     "storageMB": "[variables('skuSizeMB')]",
                     "backupRetentionDays": "[variables('backupRetentionDays')]",
@@ -58,9 +70,9 @@
                 {
                     "type": "Microsoft.DBforMariaDB/servers/databases",
                     "apiVersion": "2018-06-01",
-                    "name": "[concat(parameters('serverName'), '/', parameters('databaseName'))]",
+                    "name": "[concat(parameters('dbHost'), '/', parameters('dbName'))]",
                     "dependsOn": [
-                        "[resourceId('Microsoft.DBforMariaDB/servers', parameters('serverName'))]"
+                        "[resourceId('Microsoft.DBforMariaDB/servers', parameters('dbHost'))]"
                     ],
                     "properties": {
                         "charset": "[variables('databaseCharSet')]",
@@ -72,9 +84,9 @@
         {
             "type": "Microsoft.DBforMariaDB/servers/firewallRules",
             "apiVersion": "2018-06-01",
-            "name": "[concat(parameters('serverName'), '/AllowAllWindowsAzureIps')]",
+            "name": "[concat(parameters('dbHost'), '/AllowAllWindowsAzureIps')]",
             "dependsOn": [
-                "[resourceId('Microsoft.DBforMariaDB/servers', parameters('serverName'))]"
+                "[resourceId('Microsoft.DBforMariaDB/servers', parameters('dbHost'))]"
             ],
             "properties": {
                 "startIpAddress": "0.0.0.0",

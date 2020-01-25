@@ -29,7 +29,7 @@
         "dbHost": {
             "type": "string",
             "metadata": {
-                "description": "The domain name of the MariaDB instance."
+                "description": "The host name of the MariaDB instance."
             }
         },
         "dbName": {
