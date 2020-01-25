@@ -3,44 +3,67 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "vnetName": {
-            "defaultValue": "vnet-wp-test-eastus",
-            "type": "String"
-        },
-        "scaleSetMinCapacity": {
-            "defaultValue": "2",
-            "type": "String"
+            "type": "String",
+            "metadata": {
+                "description": "The name of the VNet resource into which the scale set should be installed."
+            }
         },
         "machineSku": {
             "type": "string",
-            "defaultValue": "Standard_B1s",
             "metadata": {
                 "description": "The sku for the virtual machine size you want to allocate."
             }
         },
+        "scaleSetMinCapacity": {
+            "type": "String",
+            "metadata": {
+                "description": "The minimum number of instances to be spun up at any one time"
+            }
+        },
+        "dbHost": {
+            "type": "string",
+            "metadata": {
+                "description": "The domain name of the MariaDB instance."
+            }
+        },
+        "dbName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the database that will contain the WordPress tables."
+            }
+        },
+        "dbUser": {
+            "type": "string",
+            "metadata": {
+                "description": "The user name that WordPress will use to connect to the database."
+            }
+        },
+        "dbPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The password for the database admin."
+            }
+        },
         "adminUsername": {
             "type": "string",
-            "defaultValue": "mcsheaj",
             "metadata": {
                 "description": "The user name for the administrator account to create on each instance."
             }
         },
         "sshPublicKey": {
             "type": "string",
-            "defaultValue": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBW53KwBRdbdgEBy604/wzw9HgyA0RpSaI0JtIuAddzL3iJKG6+8UffC23577zlWw2AJXu9c9SA3Q2/00d8vFz5F943ElgOKP0JRmJ+xGQQLe/7k0qmfZZCCEO2Rg2VBpYPt9mYf8KX5i6RP17+QJABDfy0VrMv9Ht38xhbtBx3XptcaOmScJxq6+UEEfERSEhGlZCmFSBDkPiwXVi+geVFikAwcnFCXvXZANoQ9wE8FlNNcwei9UeZuSdB3SBhC1CtEdLOzd5jDQZrLhPfDnbsi44t4N5aYnoTTEIo0tyruEUDifMvXPMu/ObbNydxho0PUhNAwPPlzZHGXHswH3L mcsheaj@ip-172-24-43-139.ec2.internal",
             "metadata": {
                 "description": "The public key to authenticate with for the admin account."
             }
         },
         "applicationName": {
             "type": "string",
-            "defaultValue": "WordPress",
             "metadata": {
                 "description": "The value for the application name tag (e.g. WordPress)."
             }
         },
         "environment": {
             "type": "string",
-            "defaultValue": "Test",
             "metadata": {
                 "description": "The value for the environment tag (e.g. Production, Test, Development, Demo, ...)."
             }
@@ -55,7 +78,12 @@
         "availabilityZones": ["1", "2"],
         "subnetAgw": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/subnet-agw-', variables('suffix'))]",
         "subnetPrivate": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/subnet-private-', variables('suffix'))]",
-        "customData": "[concat('#!/bin/bash -xe', '
+        "customData": "[concat(
+            '#!/bin/bash -xe
+            export DB_HOST=', parameters('dbHost'), '.mariadb.database.azure.com
+            export DB_NAME=', parameters('dbName'), '
+            export DB_USER=', parameters('dbUser'), '
+            export DB_PASSWORD=', parameters('dbPassword'), '
             wget --no-cache -O /tmp/bootstrap-apache.sh https://raw.githubusercontent.com/mcsheaj/azure-wordpress-high-availability-blog/master/vmss-apache-agw/scripts/bootstrap-apache.sh
             bash /tmp/bootstrap-apache.sh
             ')]"

@@ -11,6 +11,15 @@
         "scaleSetMinCapacity": {
             "value": "2"
         },
+        "dbHost": {
+            "value": "sql-mariadb-wp-test-eastus"
+        },
+        "dbName": {
+            "value": "sqldb-mariadb-wp-test-eastus"
+        },
+        "dbUser": {
+            "value": "wordpresssa"
+        },
         "adminUsername": {
             "value": "mcsheaj"
         },

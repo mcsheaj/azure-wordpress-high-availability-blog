@@ -1,5 +1,11 @@
 #!/bin/bash -xe
 
+# Turn off bash history
+set +o history
+
+# Restrict access to the cloud init log file
+chmod 640 /var/log/cloud-init-output.log
+
 # Resync the package index files and upgrade all installed packages
 apt clean & apt-get -y update
 apt-get -y upgrade
@@ -51,6 +57,22 @@ rm -rf /var/www/html/wp-*
 mv /tmp/wordpress/* /var/www/html
 chown -R www-data:root /var/www/html
 chmod 775 /var/www/html
+cd /var/www/html
+
+# Configure wordpress
+mv wp-config-sample.php wp-config.php 
+sed -i "s/define( *'DB_USER', '.*' *);/define( 'DB_USER', '${DB_USER}' );/" wp-config.php 
+sed -i "s/define( *'DB_PASSWORD', '.*' *);/define( 'DB_PASSWORD', '${DB_PASSWORD}' );/" wp-config.php 
+sed -i "s/define( *'DB_NAME', '.*' *);/define( 'DB_NAME', '${DB_DATABASE}' );/" wp-config.php 
+sed -i "s/define( *'DB_HOST', '.*' *);/define( 'DB_HOST', '${DB_SERVER}' );/" wp-config.php 
+
+# Generate Auth keys and salts
+SALT=$(curl -s -L https://api.wordpress.org/secret-key/1.1/salt/)
+STRING='put your unique phrase here'
+printf '%s\n' "g/$STRING/d" a "$SALT" . w | ed -s wp-config.php
+
+# Lock down wp-config.php
+chmod 660 wp-config.php
 
 # Restart apache
 systemctl restart apache2
@@ -63,3 +85,6 @@ apt-get -y install apt-transport-https lsb-release gnupg curl
 
 # Install the CLI
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+# Turn bash history back on
+set -o history
