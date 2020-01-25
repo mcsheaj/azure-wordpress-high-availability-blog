@@ -197,9 +197,9 @@
             "type": "string",
             "value": "[reference(variables('publicSubnetEndpointName')).networkInterfaces[0].id]"
         },
-        "publicEndPointIp": {
+        "privateEndPointNicId": {
             "type": "string",
-            "value": "[reference(reference(variables('publicSubnetEndpointName')).networkInterfaces[0].id, '2019-04-01', 'Full').ipConfigurations[0].privateIPAddressid]"
+            "value": "[reference(variables('privateSubnetEndpointName')).networkInterfaces[0].id]"
         }
     }
 }

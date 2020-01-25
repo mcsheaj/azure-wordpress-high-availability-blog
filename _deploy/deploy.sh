@@ -44,6 +44,17 @@ az group deployment create \
     --template-file "azuredeploy.json" \
     --parameters @"azuredeploy.parameters.json"
 
+#    "outputs": {
+#        "publicEndPointNicId": {
+#            "type": "string",
+#            "value": "[reference(variables('publicSubnetEndpointName')).networkInterfaces[0].id]"
+#        },
+#        "publicEndPointIp": {
+#            "type": "string",
+#            "value": "[reference(reference(variables('publicSubnetEndpointName')).networkInterfaces[0].id, '2019-04-01', 'Full').ipConfigurations[0].privateIPAddressid]"
+#        }
+#    }
+
 # download the template and parameter files for the Privatelink DNS address records with no caching
 wget \
     --output-document="azuredeploy.json" \
