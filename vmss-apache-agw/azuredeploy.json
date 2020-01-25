@@ -320,7 +320,7 @@
         {
             "type": "Microsoft.Storage/storageAccounts/providers/roleAssignments",
             "apiVersion": "2018-09-01-preview",
-            "name": "[concat(parameters('storageAccountName'), '/Microsoft.Authorization/vmss-apache-agw-', reference(variables('scaleSetName'), '2017-12-01', 'Full').identity.principalId)]",
+            "name": "[concat(parameters('storageAccountName'), '/Microsoft.Authorization/vmss-apache-agw-principle-', variables('suffix'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.Compute/virtualMachineScaleSets', variables('scaleSetName'))]"
             ],
