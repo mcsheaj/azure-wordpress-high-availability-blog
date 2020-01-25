@@ -2,14 +2,14 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "administratorLogin": {
-            "value": "wordpresssa"
-        },
-        "serverName": {
+        "dbHost": {
             "value": "sql-mariadb-wp-test-eastus"
         },
-        "databaseName": {
+        "dbName": {
             "value": "sqldb-mariadb-wp-test-eastus"
+        },
+        "dbUser": {
+            "value": "wordpresssa"
         }
     }
 }
