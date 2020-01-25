@@ -168,7 +168,7 @@
             "type": "Microsoft.Network/privateDnsZones",
             "apiVersion": "2018-09-01",
             "name": "[variables('privateDnsName')]",
-            "location": "global",            
+            "location": "global",
             "tags": {
                 "ApplicationName": "[parameters('applicationName')]",
                 "Network": "Both",
@@ -184,6 +184,11 @@
             "dependsOn": [
                 "[variables('privateDnsName')]"
             ],
+            "tags": {
+                "ApplicationName": "[parameters('applicationName')]",
+                "Network": "Both",
+                "Environment": "[parameters('environment')]"
+            },
             "properties": {
                 "virtualNetwork": {
                     "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
@@ -193,9 +198,25 @@
         }
     ],
     "outputs": {
+        "storageAccountName": {
+            "type": "string",
+            "value": "[parameters('storageAccountName')]"
+        },
+        "privateDnsName": {
+            "type": "string",
+            "value": "[variables('privateDnsName')]"
+        },
+        "publicSubnetName": {
+            "type": "string",
+            "value": "[variables('publicSubnetEndpointName')]"
+        },
         "publicEndPointNicId": {
             "type": "string",
             "value": "[reference(variables('publicSubnetEndpointName')).networkInterfaces[0].id]"
+        },
+        "privateSubnetName": {
+            "type": "string",
+            "value": "[variables('privateSubnetEndpointName')]"
         },
         "privateEndPointNicId": {
             "type": "string",

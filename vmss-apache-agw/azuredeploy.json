@@ -224,7 +224,7 @@
             },
             "tags": {
                 "ApplicationName": "[parameters('applicationName')]",
-                "Network": "Private",
+                "Network": "AGW",
                 "Environment": "[parameters('environment')]"
             }
         },
@@ -329,5 +329,15 @@
                 "principalId": "[reference(variables('scaleSetName'), '2017-12-01', 'Full').identity.principalId]"
             }
         }
-    ]
+    ],
+    "outputs": {
+        "publicIp": {
+            "type": "string",
+            "value": "[variables('pipName')]"
+        },
+        "dnsName": {
+            "type": "string",
+            "value": "[reference(variables('pipName')).dnsSettings.fqdn]"
+        }
+    }
 }

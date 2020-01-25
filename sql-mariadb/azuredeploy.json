@@ -25,6 +25,18 @@
             "metadata": {
                 "description": "The password for the database admin."
             }
+        },
+        "applicationName": {
+            "type": "string",
+            "metadata": {
+                "description": "The value for the application name tag (e.g. WordPress)."
+            }
+        },
+        "environment": {
+            "type": "string",
+            "metadata": {
+                "description": "The value for the environment tag (e.g. Production, Test, Development, Demo, ...)."
+            }
         }
     },
     "variables": {
@@ -65,6 +77,11 @@
                     "geoRedundantBackup": "[variables('geoRedundantBackup')]",
                     "storageAutoGrow": "[variables('storageAutoGrow')]"
                 }
+            },
+           "tags": {
+                "ApplicationName": "[parameters('applicationName')]",
+                "Network": "Azure",
+                "Environment": "[parameters('environment')]"
             },
             "resources": [
                 {

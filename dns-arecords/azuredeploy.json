@@ -1,15 +1,24 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "storageAccountName": {
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "The name of the storage account to be used for backups and other shared assets."
+            }
         },
         "endpoint1Ip": {
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "The IP address of one of the private link endpoints."
+            }
         },
         "endpoint2Ip": {
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "The IP address of the other private link endpoints."
+            }
         }
     },
     "variables": {

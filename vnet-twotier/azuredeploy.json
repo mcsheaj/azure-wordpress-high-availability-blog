@@ -86,6 +86,23 @@
                             "priority": 110,
                             "direction": "Inbound"
                         }
+                    },
+                    {
+                        "name": "agw_65503_65535_allow_internet_inbound_rule",
+                        "properties": {
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "65503-65535",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 120,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
                     }
                 ]
             },
@@ -260,7 +277,7 @@
             },
             "tags": {
                 "ApplicationName": "[parameters('applicationName')]",
-                "Network": "Public",
+                "Network": "ALL",
                 "Environment": "[parameters('environment')]"
             }
         }
