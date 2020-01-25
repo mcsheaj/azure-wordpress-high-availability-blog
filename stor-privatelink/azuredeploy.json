@@ -195,7 +195,7 @@
     "outputs": {
         "publicEndPointNicID": {
             "type": "string",
-            "value": "[reference(variables('publicSubnetEndpointName')).networkInterfaces.id]"
+            "value": "[reference(variables('publicSubnetEndpointName')).networkInterfaces[0].id]"
         }
     }
 }
