@@ -326,7 +326,7 @@
             ],
             "properties": {
                 "roleDefinitionId": "[variables('contributor')]",
-                "principalId": "[reference(variables('scaleSetName')).identity.principalId]"
+                "principalId": "[reference(variables('scaleSetName'), '2017-12-01', 'Full').identity.principalId]"
             }
         }
     ]
