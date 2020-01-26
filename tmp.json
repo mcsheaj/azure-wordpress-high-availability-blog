@@ -1,0 +1,347 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualMachineScaleSets_vmss_apache_wp_test_eastus_name": {
+            "defaultValue": "vmss-apache-wp-test-eastus",
+            "type": "String"
+        },
+        "virtualNetworks_vnet_wp_test_eastus_externalid": {
+            "defaultValue": "/subscriptions/1e25beac-0bd5-4dbe-a039-755b538c7938/resourceGroups/rg-wp-test-eastus-001/providers/Microsoft.Network/virtualNetworks/vnet-wp-test-eastus",
+            "type": "String"
+        },
+        "applicationGateways_agw_apache_wp_test_eastus_externalid": {
+            "defaultValue": "/subscriptions/1e25beac-0bd5-4dbe-a039-755b538c7938/resourceGroups/rg-wp-test-eastus-001/providers/Microsoft.Network/applicationGateways/agw-apache-wp-test-eastus",
+            "type": "String"
+        },
+        "disks_vmss_apache_wp_test_vmss_apache_wp_test_eOS__1_d8488bf0b5104344bad8ee6387f91557_externalid": {
+            "defaultValue": "/subscriptions/1e25beac-0bd5-4dbe-a039-755b538c7938/resourceGroups/rg-wp-test-eastus-001/providers/Microsoft.Compute/disks/vmss-apache-wp-test-vmss-apache-wp-test-eOS__1_d8488bf0b5104344bad8ee6387f91557",
+            "type": "String"
+        },
+        "disks_vmss_apache_wp_test_vmss_apache_wp_test_eOS__1_efdd1ee74f75484c85573a915a2635c6_externalid": {
+            "defaultValue": "/subscriptions/1e25beac-0bd5-4dbe-a039-755b538c7938/resourceGroups/rg-wp-test-eastus-001/providers/Microsoft.Compute/disks/vmss-apache-wp-test-vmss-apache-wp-test-eOS__1_efdd1ee74f75484c85573a915a2635c6",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Compute/virtualMachineScaleSets",
+            "apiVersion": "2019-07-01",
+            "name": "[parameters('virtualMachineScaleSets_vmss_apache_wp_test_eastus_name')]",
+            "location": "eastus",
+            "tags": {
+                "ApplicationName": "WordPress",
+                "Network": "AGW",
+                "Environment": "Test"
+            },
+            "sku": {
+                "name": "Standard_B1s",
+                "tier": "Standard",
+                "capacity": 2
+            },
+            "zones": [
+                "1",
+                "2"
+            ],
+            "identity": {
+                "principalId": "e0121603-4495-4164-8363-96b1a306f2fe",
+                "tenantId": "f39e1f74-643d-43dd-949c-6b7640c255fd",
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "singlePlacementGroup": false,
+                "upgradePolicy": {
+                    "mode": "Automatic"
+                },
+                "scaleInPolicy": {
+                    "rules": [
+                        "OldestVM"
+                    ]
+                },
+                "virtualMachineProfile": {
+                    "osProfile": {
+                        "computerNamePrefix": "apacheakm",
+                        "adminUsername": "mcsheaj",
+                        "linuxConfiguration": {
+                            "disablePasswordAuthentication": true,
+                            "ssh": {
+                                "publicKeys": [
+                                    {
+                                        "path": "/home/mcsheaj/.ssh/authorized_keys",
+                                        "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBW53KwBRdbdgEBy604/wzw9HgyA0RpSaI0JtIuAddzL3iJKG6+8UffC23577zlWw2AJXu9c9SA3Q2/00d8vFz5F943ElgOKP0JRmJ+xGQQLe/7k0qmfZZCCEO2Rg2VBpYPt9mYf8KX5i6RP17+QJABDfy0VrMv9Ht38xhbtBx3XptcaOmScJxq6+UEEfERSEhGlZCmFSBDkPiwXVi+geVFikAwcnFCXvXZANoQ9wE8FlNNcwei9UeZuSdB3SBhC1CtEdLOzd5jDQZrLhPfDnbsi44t4N5aYnoTTEIo0tyruEUDifMvXPMu/ObbNydxho0PUhNAwPPlzZHGXHswH3L mcsheaj@ip-172-24-43-139.ec2.internal"
+                                    }
+                                ]
+                            },
+                            "provisionVMAgent": true
+                        },
+                        "secrets": []
+                    },
+                    "storageProfile": {
+                        "osDisk": {
+                            "createOption": "FromImage",
+                            "caching": "ReadWrite",
+                            "managedDisk": {
+                                "storageAccountType": "Standard_LRS"
+                            },
+                            "diskSizeGB": 30
+                        },
+                        "imageReference": {
+                            "publisher": "Canonical",
+                            "offer": "UbuntuServer",
+                            "sku": "18.04-LTS",
+                            "version": "latest"
+                        }
+                    },
+                    "networkProfile": {
+                        "networkInterfaceConfigurations": [
+                            {
+                                "name": "[concat('nic-', parameters('virtualMachineScaleSets_vmss_apache_wp_test_eastus_name'))]",
+                                "properties": {
+                                    "primary": true,
+                                    "enableAcceleratedNetworking": false,
+                                    "dnsSettings": {
+                                        "dnsServers": []
+                                    },
+                                    "enableIPForwarding": false,
+                                    "ipConfigurations": [
+                                        {
+                                            "name": "[concat('ipconfig-', parameters('virtualMachineScaleSets_vmss_apache_wp_test_eastus_name'))]",
+                                            "properties": {
+                                                "subnet": {
+                                                    "id": "[concat(parameters('virtualNetworks_vnet_wp_test_eastus_externalid'), '/subnets/subnet-private-wp-test-eastus')]"
+                                                },
+                                                "privateIPAddressVersion": "IPv4",
+                                                "applicationGatewayBackendAddressPools": [
+                                                    {
+                                                        "id": "[concat(parameters('applicationGateways_agw_apache_wp_test_eastus_externalid'), '/backendAddressPools/scalesetLbbPool')]"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                },
+                "overprovision": false,
+                "doNotRunExtensionsOnOverprovisionedVMs": false,
+                "zoneBalance": false,
+                "platformFaultDomainCount": 1
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachineScaleSets/virtualMachines",
+            "apiVersion": "2019-07-01",
+            "name": "[concat(parameters('virtualMachineScaleSets_vmss_apache_wp_test_eastus_name'), '/0')]",
+            "location": "eastus",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachineScaleSets', parameters('virtualMachineScaleSets_vmss_apache_wp_test_eastus_name'))]"
+            ],
+            "tags": {
+                "ApplicationName": "WordPress",
+                "Network": "AGW",
+                "Environment": "Test"
+            },
+            "sku": {
+                "name": "Standard_B1s",
+                "tier": "Standard"
+            },
+            "zones": [
+                "1"
+            ],
+            "identity": {
+                "principalId": "e0121603-4495-4164-8363-96b1a306f2fe",
+                "tenantId": "f39e1f74-643d-43dd-949c-6b7640c255fd",
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "networkProfileConfiguration": {
+                    "networkInterfaceConfigurations": [
+                        {
+                            "name": "nic-vmss-apache-wp-test-eastus",
+                            "properties": {
+                                "primary": true,
+                                "enableAcceleratedNetworking": false,
+                                "dnsSettings": {
+                                    "dnsServers": []
+                                },
+                                "enableIPForwarding": false,
+                                "ipConfigurations": [
+                                    {
+                                        "name": "ipconfig-vmss-apache-wp-test-eastus",
+                                        "properties": {
+                                            "subnet": {
+                                                "id": "[concat(parameters('virtualNetworks_vnet_wp_test_eastus_externalid'), '/subnets/subnet-private-wp-test-eastus')]"
+                                            },
+                                            "privateIPAddressVersion": "IPv4",
+                                            "applicationGatewayBackendAddressPools": [
+                                                {
+                                                    "id": "[concat(parameters('applicationGateways_agw_apache_wp_test_eastus_externalid'), '/backendAddressPools/scalesetLbbPool')]"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "hardwareProfile": {},
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "Canonical",
+                        "offer": "UbuntuServer",
+                        "sku": "18.04-LTS",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Linux",
+                        "name": "vmss-apache-wp-test-vmss-apache-wp-test-eOS__1_d8488bf0b5104344bad8ee6387f91557",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "storageAccountType": "Standard_LRS",
+                            "id": "[parameters('disks_vmss_apache_wp_test_vmss_apache_wp_test_eOS__1_d8488bf0b5104344bad8ee6387f91557_externalid')]"
+                        },
+                        "diskSizeGB": 30
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "apacheakm000000",
+                    "adminUsername": "mcsheaj",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": true,
+                        "ssh": {
+                            "publicKeys": [
+                                {
+                                    "path": "/home/mcsheaj/.ssh/authorized_keys",
+                                    "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBW53KwBRdbdgEBy604/wzw9HgyA0RpSaI0JtIuAddzL3iJKG6+8UffC23577zlWw2AJXu9c9SA3Q2/00d8vFz5F943ElgOKP0JRmJ+xGQQLe/7k0qmfZZCCEO2Rg2VBpYPt9mYf8KX5i6RP17+QJABDfy0VrMv9Ht38xhbtBx3XptcaOmScJxq6+UEEfERSEhGlZCmFSBDkPiwXVi+geVFikAwcnFCXvXZANoQ9wE8FlNNcwei9UeZuSdB3SBhC1CtEdLOzd5jDQZrLhPfDnbsi44t4N5aYnoTTEIo0tyruEUDifMvXPMu/ObbNydxho0PUhNAwPPlzZHGXHswH3L mcsheaj@ip-172-24-43-139.ec2.internal"
+                                }
+                            ]
+                        },
+                        "provisionVMAgent": true
+                    },
+                    "secrets": [],
+                    "allowExtensionOperations": true,
+                    "requireGuestProvisionSignal": true
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[concat(resourceId('Microsoft.Compute/virtualMachineScaleSets/virtualMachines', parameters('virtualMachineScaleSets_vmss_apache_wp_test_eastus_name'), '0'), '/networkInterfaces/nic-vmss-apache-wp-test-eastus')]"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachineScaleSets/virtualMachines",
+            "apiVersion": "2019-07-01",
+            "name": "[concat(parameters('virtualMachineScaleSets_vmss_apache_wp_test_eastus_name'), '/1')]",
+            "location": "eastus",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachineScaleSets', parameters('virtualMachineScaleSets_vmss_apache_wp_test_eastus_name'))]"
+            ],
+            "tags": {
+                "ApplicationName": "WordPress",
+                "Network": "AGW",
+                "Environment": "Test"
+            },
+            "sku": {
+                "name": "Standard_B1s",
+                "tier": "Standard"
+            },
+            "zones": [
+                "2"
+            ],
+            "identity": {
+                "principalId": "e0121603-4495-4164-8363-96b1a306f2fe",
+                "tenantId": "f39e1f74-643d-43dd-949c-6b7640c255fd",
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "networkProfileConfiguration": {
+                    "networkInterfaceConfigurations": [
+                        {
+                            "name": "nic-vmss-apache-wp-test-eastus",
+                            "properties": {
+                                "primary": true,
+                                "enableAcceleratedNetworking": false,
+                                "dnsSettings": {
+                                    "dnsServers": []
+                                },
+                                "enableIPForwarding": false,
+                                "ipConfigurations": [
+                                    {
+                                        "name": "ipconfig-vmss-apache-wp-test-eastus",
+                                        "properties": {
+                                            "subnet": {
+                                                "id": "[concat(parameters('virtualNetworks_vnet_wp_test_eastus_externalid'), '/subnets/subnet-private-wp-test-eastus')]"
+                                            },
+                                            "privateIPAddressVersion": "IPv4",
+                                            "applicationGatewayBackendAddressPools": [
+                                                {
+                                                    "id": "[concat(parameters('applicationGateways_agw_apache_wp_test_eastus_externalid'), '/backendAddressPools/scalesetLbbPool')]"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "hardwareProfile": {},
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "Canonical",
+                        "offer": "UbuntuServer",
+                        "sku": "18.04-LTS",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Linux",
+                        "name": "vmss-apache-wp-test-vmss-apache-wp-test-eOS__1_efdd1ee74f75484c85573a915a2635c6",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "storageAccountType": "Standard_LRS",
+                            "id": "[parameters('disks_vmss_apache_wp_test_vmss_apache_wp_test_eOS__1_efdd1ee74f75484c85573a915a2635c6_externalid')]"
+                        },
+                        "diskSizeGB": 30
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "apacheakm000001",
+                    "adminUsername": "mcsheaj",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": true,
+                        "ssh": {
+                            "publicKeys": [
+                                {
+                                    "path": "/home/mcsheaj/.ssh/authorized_keys",
+                                    "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBW53KwBRdbdgEBy604/wzw9HgyA0RpSaI0JtIuAddzL3iJKG6+8UffC23577zlWw2AJXu9c9SA3Q2/00d8vFz5F943ElgOKP0JRmJ+xGQQLe/7k0qmfZZCCEO2Rg2VBpYPt9mYf8KX5i6RP17+QJABDfy0VrMv9Ht38xhbtBx3XptcaOmScJxq6+UEEfERSEhGlZCmFSBDkPiwXVi+geVFikAwcnFCXvXZANoQ9wE8FlNNcwei9UeZuSdB3SBhC1CtEdLOzd5jDQZrLhPfDnbsi44t4N5aYnoTTEIo0tyruEUDifMvXPMu/ObbNydxho0PUhNAwPPlzZHGXHswH3L mcsheaj@ip-172-24-43-139.ec2.internal"
+                                }
+                            ]
+                        },
+                        "provisionVMAgent": true
+                    },
+                    "secrets": [],
+                    "allowExtensionOperations": true,
+                    "requireGuestProvisionSignal": true
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[concat(resourceId('Microsoft.Compute/virtualMachineScaleSets/virtualMachines', parameters('virtualMachineScaleSets_vmss_apache_wp_test_eastus_name'), '1'), '/networkInterfaces/nic-vmss-apache-wp-test-eastus')]"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
