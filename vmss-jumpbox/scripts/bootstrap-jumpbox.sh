@@ -1,4 +1,7 @@
-#!/bin/bash -xe
+#!/bin/bash
+
+set -x
+set +o history
 
 # Resync the package index files and upgrade all installed packages
 apt clean & apt-get -y update
