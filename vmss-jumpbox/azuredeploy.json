@@ -96,7 +96,11 @@
                         },
                         "osDisk": {
                             "createOption": "FromImage",
-                            "caching": "ReadWrite"
+                            "caching": "ReadWrite",
+                            "managedDisk": {
+                                "storageAccountType": "Standard_LRS"
+                            },
+                            "diskSizeGB": 30
                         }
                     },
                     "priority": "Regular",
