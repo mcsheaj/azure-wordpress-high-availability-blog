@@ -90,6 +90,7 @@
         "contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
         "customData": "[concat(
             '#!/bin/bash -xe
+            set +o
             export DB_HOST=', parameters('dbHost'), '.mariadb.database.azure.com
             export DB_NAME=', parameters('dbName'), '
             export DB_USER=', parameters('dbUser'), '@', parameters('dbHost'),'
