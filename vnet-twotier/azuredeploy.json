@@ -247,7 +247,6 @@
                         "name": "[concat('subnet-agw-', variables('suffix'))]",
                         "properties": {
                             "addressPrefix": "[parameters('agwSubnetPrefix')]",
-                            "privateEndpointNetworkPolicies": "Disabled",
                             "networkSecurityGroup": {
                                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('agwSecurityGroupName'))]"
                             }
@@ -257,7 +256,11 @@
                         "name": "[concat('subnet-public-', variables('suffix'))]",
                         "properties": {
                             "addressPrefix": "[parameters('publicSubnetPrefix')]",
-                            "privateEndpointNetworkPolicies": "Disabled",
+                            "serviceEndpoints": [
+                                {
+                                    "service": "Microsoft.Storage"
+                                }
+                            ],
                             "networkSecurityGroup": {
                                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('publicSecurityGroupName'))]"
                             }
@@ -267,7 +270,11 @@
                         "name": "[concat('subnet-private-', variables('suffix'))]",
                         "properties": {
                             "addressPrefix": "[parameters('privateSubnetPrefix')]",
-                            "privateEndpointNetworkPolicies": "Disabled",
+                            "serviceEndpoints": [
+                                {
+                                    "service": "Microsoft.Storage"
+                                }
+                            ],
                             "networkSecurityGroup": {
                                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('privateSecurityGroupName'))]"
                             }
