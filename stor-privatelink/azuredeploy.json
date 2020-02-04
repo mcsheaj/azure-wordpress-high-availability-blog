@@ -27,16 +27,7 @@
     "variables": {
         "suffix": "[skip(parameters('vnetName'), 5)]",
         "publicSubnetName": "[concat('subnet-public-', variables('suffix'))]",
-        "privateSubnetName": "[concat('subnet-private-', variables('suffix'))]",
-        "publicSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), variables('publicSubnetName'))]",
-        "privateSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), variables('privateSubnetName'))]",
-        "publicSubnetEndpointName": "[concat('ep-stor-', variables('publicSubnetName'))]",
-        "privateSubnetEndpointName": "[concat('ep-stor-', variables('privateSubnetName'))]",
-        "publicSubnetEndpointConnectionName": "[concat(variables('publicSubnetEndpointName'), '-', deployment().name)]",
-        "privateSubnetEndpointConnectionName": "[concat(variables('privateSubnetEndpointName'), '-', deployment().name)]",
-        "publicSubnetPrivateLinkServiceId": "[concat(resourceGroup().id, '/providers/Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]",
-        "privateSubnetPrivateLinkServiceId": "[concat(resourceGroup().id, '/providers/Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]",
-        "privateDnsName": "privatelink.blob.core.windows.net"
+        "privateSubnetName": "[concat('subnet-private-', variables('suffix'))]"
     },
     "resources": [
         {
@@ -101,100 +92,6 @@
             "properties": {
                 "publicAccess": "None"
             }
-        },
-        {
-            "apiVersion": "2019-04-01",
-            "name": "[variables('publicSubnetEndpointName')]",
-            "type": "Microsoft.Network/privateEndpoints",
-            "location": "[resourceGroup().Location]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', parameters('blobContainerName'))]"
-            ],
-            "properties": {
-                "privateLinkServiceConnections": [
-                    {
-                        "name": "[variables('publicSubnetEndpointConnectionName')]",
-                        "properties": {
-                            "privateLinkServiceId": "[variables('publicSubnetPrivateLinkServiceId')]",
-                            "groupIds": [
-                                "blob"
-                            ]
-                        }
-                    }
-                ],
-                "manualPrivateLinkServiceConnections": [],
-                "subnet": {
-                    "id": "[variables('publicSubnetId')]"
-                }
-            },            
-            "tags": {
-                "ApplicationName": "[parameters('applicationName')]",
-                "Network": "Public",
-                "Environment": "[parameters('environment')]"
-            }
-        },
-        {
-            "apiVersion": "2019-04-01",
-            "name": "[variables('privateSubnetEndpointName')]",
-            "type": "Microsoft.Network/privateEndpoints",
-            "location": "[resourceGroup().Location]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', parameters('blobContainerName'))]"
-            ],
-            "properties": {
-                "privateLinkServiceConnections": [
-                    {
-                        "name": "[variables('privateSubnetEndpointConnectionName')]",
-                        "properties": {
-                            "privateLinkServiceId": "[variables('privateSubnetPrivateLinkServiceId')]",
-                            "groupIds": [
-                                "blob"
-                            ]
-                        }
-                    }
-                ],
-                "manualPrivateLinkServiceConnections": [],
-                "subnet": {
-                    "id": "[variables('privateSubnetId')]"
-                }
-            },            
-            "tags": {
-                "ApplicationName": "[parameters('applicationName')]",
-                "Network": "Private",
-                "Environment": "[parameters('environment')]"
-            }
-        },
-        {
-            "type": "Microsoft.Network/privateDnsZones",
-            "apiVersion": "2018-09-01",
-            "name": "[variables('privateDnsName')]",
-            "location": "global",
-            "tags": {
-                "ApplicationName": "[parameters('applicationName')]",
-                "Network": "Both",
-                "Environment": "[parameters('environment')]"
-            },
-            "properties": {}
-        },
-        {
-            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
-            "apiVersion": "2018-09-01",
-            "name": "[concat(variables('privateDnsName'), '/', parameters('vnetName') )]",
-            "location": "global",
-            "dependsOn": [
-                "[variables('privateDnsName')]"
-            ],
-            "tags": {
-                "ApplicationName": "[parameters('applicationName')]",
-                "Network": "Both",
-                "Environment": "[parameters('environment')]"
-            },
-            "properties": {
-                "virtualNetwork": {
-                    "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
-                },
-                "registrationEnabled": false
-            }
         }
     ],
     "outputs": {
@@ -202,25 +99,13 @@
             "type": "string",
             "value": "[parameters('storageAccountName')]"
         },
-        "privateDnsName": {
-            "type": "string",
-            "value": "[variables('privateDnsName')]"
-        },
         "publicSubnetName": {
             "type": "string",
-            "value": "[variables('publicSubnetEndpointName')]"
-        },
-        "publicEndPointNicId": {
-            "type": "string",
-            "value": "[reference(variables('publicSubnetEndpointName')).networkInterfaces[0].id]"
+            "value": "[variables('publicSubnetName')]"
         },
         "privateSubnetName": {
             "type": "string",
-            "value": "[variables('privateSubnetEndpointName')]"
-        },
-        "privateEndPointNicId": {
-            "type": "string",
-            "value": "[reference(variables('privateSubnetEndpointName')).networkInterfaces[0].id]"
+            "value": "[variables('privateSubnetName')]"
         }
     }
 }
