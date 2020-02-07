@@ -34,12 +34,12 @@ wget \
 
 # deploy Storage and PrivateLink endpoints and private DNS zone for PrivateLink
 az group deployment create \
-    --name "ep-stor-deployment-wp-prod-westus2" \
+    --name "stor-blob-deployment-wp-prod-westus2" \
     --resource-group "rg-wp-prod-westus2-001" \
     --template-file "azuredeploy.json" \
     --parameters @"azuredeploy.parameters.json"
 az group deployment create \
-    --name "ep-stor-deployment-wp-test-eastus" \
+    --name "stor-blob-deployment-wp-test-eastus" \
     --resource-group "rg-wp-test-eastus-001" \
     --template-file "azuredeploy.json" \
     --parameters @"azuredeploy.parameters.json"
